@@ -17,10 +17,10 @@ model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 # )
 
 pipeline = transformers.pipeline(
-  "text-generation",
-  model="meta-llama/Meta-Llama-3-8B-Instruct",
-  model_kwargs={"torch_dtype": torch.bfloat16},
-  device="cuda",
+    "text-generation",
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    model_kwargs={"torch_dtype": torch.bfloat16},
+    device="cuda",
 )
 
 app = FastAPI()
@@ -39,7 +39,8 @@ def generate_tokens_paddle_(image_path: str) -> str:
     except Exception as e:
         raise e
 
-@app.get("/llama3")
+
+@app.post("/llama3")
 def read_item(inputFilePath: str, prompt: str):
     try:
         ocr_result = generate_tokens_paddle_(inputFilePath)
@@ -61,13 +62,15 @@ def read_item(inputFilePath: str, prompt: str):
 
         outputs = pipeline(
             prompt,
-            max_new_tokens=256,
+            max_new_tokens=2048,
             eos_token_id=terminators,
             do_sample=True,
             temperature=0.6,
             top_p=0.9,
         )
-        return outputs[0]["generated_text"][len(prompt):]
+        prompt_result = outputs[0]["generated_text"][len(prompt):]
+        print(prompt_result)
+        return prompt_result
 
     except Exception as ex:
         raise ex
