@@ -52,7 +52,8 @@ def read_item(inputFilePath: str, prompt: str):
         prompt = pipeline.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
-            add_generation_prompt=True
+            add_generation_prompt=True,
+            format="JSON"
         )
 
         terminators = [
