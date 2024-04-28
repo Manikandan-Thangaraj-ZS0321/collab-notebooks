@@ -3,6 +3,7 @@ import transformers
 import torch
 import gc
 from paddleocr import PaddleOCR
+from pydantic import BaseModel
 
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 
@@ -27,7 +28,7 @@ app = FastAPI()
 paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False)
 
 
-class LlamaRequest:
+class LlamaRequest(BaseModel):
     inputFilePath: str
     prompt: str
 
