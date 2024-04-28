@@ -27,6 +27,11 @@ app = FastAPI()
 paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False)
 
 
+class LlamaRequest:
+    inputFilePath: str
+    prompt: str
+
+
 def generate_tokens_paddle_(image_path: str) -> str:
     try:
         result_paddle = paddle_ocr.ocr(image_path, cls=True)
@@ -41,11 +46,11 @@ def generate_tokens_paddle_(image_path: str) -> str:
 
 
 @app.post("/llama3")
-def read_item(inputFilePath: str, prompt: str):
+def read_item(request: LlamaRequest):
     try:
-        ocr_result = generate_tokens_paddle_(inputFilePath)
+        ocr_result = generate_tokens_paddle_(request.inputFilePath)
         messages = [
-            {"role": "system", "content": prompt},
+            {"role": "system", "content": request.prompt},
             {"role": "user", "content": ocr_result},
         ]
 
