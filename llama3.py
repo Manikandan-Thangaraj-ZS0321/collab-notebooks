@@ -35,7 +35,7 @@ class LlamaRequest(BaseModel):
 
 def generate_tokens_paddle_(image_path: str) -> str:
     try:
-        result_paddle = paddle_ocr.ocr(image_path, cls=True)
+        result_paddle = paddle_ocr.ocr(image_path, cls=True, show_log=False)
         extracted_text = ""
         for result in result_paddle:
             for record in result:
