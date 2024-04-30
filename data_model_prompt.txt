@@ -1,0 +1,169 @@
+Questionverse configuration Info
+**Tables:**
+1. `document_type_master_data`: stores document type master data
+        * `document_type_master_data_id` (primary key)
+        * `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `version`, `document_type`
+2. `document`: stores document data
+        * `document_type` (foreign key referencing `document_type_master_data`)
+        * `tenant_id`
+        * `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `version`, `description`, `document_id`, `document_name`
+3. `sor_container`: stores sor container data
+        * `sor_container_id` (primary key)
+        * `sor_container_name`, `voting_out`, `status`, `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `tenant_id`, `version`, `document_type`
+        * foreign key referencing `document` (document_type, tenant_id)
+4. `sor_item`: stores sor item data
+        * `sor_item_id` (primary key)
+        * `sor_item_name`, `allowed_adapter`, `allowed_characters`, `char_limit`, `char_threshold`, `comparable_characters`, `sor_container_id`, `restricted_adapter`, `restricted_adapter_flag`, `validato
+r_threshold`, `word_limit`, `word_threshold`, `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `tenant_id`, `version`, `allowed_adaptor_display_text`, `restricted_ada
+pter_display_text`
+        * foreign key referencing `sor_container` (sor_container_id)
+5. `asset_info`: stores asset info data
+        * `asset_id` (primary key)
+        * `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `tenant_id`, `version`, `template_name`, `status`, `workspace_id`, `document_type`, `model_id`, `model_registry_id`,
+`channel_type`
+        * foreign key referencing `document` (document_type, tenant_id)
+6. `truth_entity`: stores truth entity data
+        * `truth_entity_id` (primary key)
+        * `truth_entity_name`, `asset_id`, `sor_container_id`, `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `tenant_id`, `version`, `sip_type`
+        * foreign key referencing `asset_info` (asset_id)
+        * foreign key referencing `sor_container` (sor_container_id)
+7. `sor_tsynonym`: stores sor synonym data
+        * `synonym_id` (primary key)
+        * `synonym`, `sor_item_id`, `truth_entity_id`, `sor_container_id`, `weights`, `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `feature`, `priority_idx`, `cat
+egory`, `tenant_id`, `version`
+        * foreign key referencing `sor_item` (sor_item_id)
+        * foreign key referencing `truth_entity` (truth_entity_id)
+8. `sor_question`: stores sor question data
+        * `question_id` (primary key)
+        * `synonym_id`, `question`, `weights`, `category`, `created_on`, `created_user_id`, `last_updated_on`, `last_updated_user_id`, `status`, `priority_idx`, `question_mapping`, `model_id`, `tenant_id
+`, `version`, `model_registry_id`, `synonym_master_id`, `added_by`
+        * foreign key referencing `sor_tsynonym` (synonym_id)
+
+**Relationships:**
+
+* One-to-many: `document` to `sor_container` (one document can have multiple sor containers)
+* Many-to-one: `sor_container` to `document` (one sor container is associated with one document)
+* One-to-One: `sor_item` to `sor_container` (one sor item can have one sor container)
+* One-to-One: `asset_info` to `document` (one asset info can have one document)
+* One-to-One: `truth_entity` to `asset_info` (one truth entity can have one asset info)
+* One-to-many: `asset_info` to `truth_entity` (one asset info is associated with multiple truth entity)
+* One-to-One: `sor_tsynonym` to `sor_item` (one sor synonym can have one sor item)
+* One-to-many: `sor_item` to `sor_tsynonym` (one sor item is associated with multiple sor synonym)
+* One-to-One: `sor_question` to `sor_tsynonym` (one sor question can have one sor synonym)
+* One-to-many: `sor_tsynonym` to `sor_question` (one sor synonym is associated with multiple sor question)
+
+**Constraints:**
+* Primary keys: `document_type_master_data_id`, `document_id`, `sor_container_id`, `asset_id`, `truth_entity_id`, `truth_entity_placeholder_id`, `synonym_id`, `question_id`
+* Foreign keys: various foreign key constraints to establish relationships between tables
+* Unique constraints: none mentioned
+* Check constraints: none mentioned
+* Default constraints: none mentioned
+
+Provide the result for the ocr result by considering the data model mentioned above
+Consider their explanation:
+1. The Document type table serves as the central repository for storing details of supported document types. It mentions about the higher level classification of document. It categorizes and manages various document types, including INVOICE, Prior Authorization forms, Health care, insurance, Driving license, and KYC documents.
+2. The SOR_Container table contains specific containers related to each document type. It is responsible for defining and managing sections that hold structured data extracted from documents. It is used for specifying section names for outbound configuration, It may or may not be present in the document
+3. The Fields table focuses on defining the specific details to be extracted from documents and how the key can be represented in the outbound.
+4. channel/template/assetInfo table represents unique identifiers for document types. It categorizes and manages documents based on their unique characteristics, such as vendor names or organization names example humana, elixir, ralph lauren, anthem
+6 Truth Entity Acts as aliases for SOR_Container, which is actually present in the document
+7. Contains placeholder or truth values present in the document/paper for the filteration, Can Include basic key for filtering out the valid paper
+8. Synonyms - Actual key in the document based on SIP and SOR_Container. Keys actually present in the document
+9. Questions - prompt Used for extracting the value of a key in key value pairs(KVP). It should not consists info about values only about key or some other.
+
+
+Extract the questionverse configuration by considering the examples below
+Example 1:
+{
+  "document_type": "INVOICE",
+  "Channels": [
+    {
+      "ChannelName": "NorthEast Electrical",
+      "TruthEntities": [
+        {
+          "truthEntity": "invoice",
+          "container": "INVOICE INFO",
+          "synonyms": [
+            {
+              "synonym": "invoice",
+              "sorItem": "invoice_number",
+              "questions": [
+                "Invoice Amount?",
+                "Invoice Number?"
+              ]
+            },
+            {
+              "synonym": "Total Due",
+              "sorItem": "total_due",
+              "questions": [
+                "Total Due Amount?",
+                "Total Due Number?"
+              ]
+            }
+          ]
+        },
+        {
+          "truthEntity": "Bank",
+          "container": "Bank Details",
+          "synonyms": [
+            {
+              "synonym": "IBAN",
+              "sorItem": "iban_no",
+              "questions": [
+                "IBAN no"
+              ]
+            },
+            {
+              "synonym": "Account",
+              "sorItem": "account_number",
+              "questions": [
+                "Account number"
+              ]
+            },
+            {
+              "synonym": "Branch",
+              "sorItem": "branch_name",
+              "questions": [
+                "branch name",
+                "what is the branch name of the bank"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
+Example 2:
+{
+  "document_type": "OTHERS",
+   channels : [{
+      "ChannelName": "w.b.mason.inc",
+      "TruthEntities": [
+        {
+          "truthEntity": "delivered To",
+          "container": "CUSTOMER DETAILS"
+          "synonyms": [
+            {
+              "synonym": "name",
+              "sorItem": "customer_name",
+              "questions": [
+                "Customer",
+                "Customer Name"
+              ]
+            },
+            {
+              "synonym": "Address",
+              "sorItem": "customer_address",
+              "questions": [
+                "Customer Address",
+                "Address"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

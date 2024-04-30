@@ -1,0 +1,58 @@
+Convert OCR results from prior authorization forms or lab reports into a structured JSON object, strictly adhering to the provided structure. Extract only the specified key-value pairs from the document, using context and synonyms to map values to the appropriate keys.
+
+
+Details to Extract:
+
+- PATIENT: patient_dob, patient_phone, patient_name, patient_member_id, patient_group_number, patient_address, patient_city_state_zip, patient_eoc
+- PRESCRIBER: prescriber_state_lic_id, prescriber_name, prescriber_city, prescriber_npi, prescriber_tax_id, prescriber_phone, prescriber_fax, prescriber_address, prescriber_city_state_zip
+- DRUG: date_of_service_to, date_of_service_from, j_code, drug_strength, hcpcs, drug_name, direction_sig, icd10, drug_quantity, diagnosis, drug_dose
+- PROVIDER: provider_fax, provider_city, provider_state, provider_tax_id, provider_npi, provider_name, provider_address, provider_phone, provider_city_state_zip
+
+
+Synonyms:
+- Patient: Patient, Member, Subscriber, Enrollee
+- Prescriber: Prescriber, Prescribing Physician, Physician, Requesting Prescriber, Requesting Provider, PCP (Primary Care Physician or Primary Care Provider), Medical Practitioner, Pediatrician
+- Provider: Provider, Servicing Provider, Rendering Provider, Outpatient Facility
+
+
+Extraction Steps:
+
+1. Key Sections: Identify sections indicating patient, prescriber, drug, and provider information.
+2. Patient Details: Extract details like "Patient Name," "DOB," "Phone," "Address," "City, State ZIP," "Member ID," and "EOC ID." Note: "Patient EOC ID" and "Patient Member ID" are distinct values.
+
+  ```json
+  "PATIENT": {
+      "patient_dob": "01/01/1980", "patient_phone": "(123) 456-7890", "patient_address": "123 Patient St", "patient_city_state_zip": "Patient City, State 12345", "patient_member_id": "M12345", "patient_eoc": "E67890", ...
+  }
+  ```
+
+
+3. Prescriber Details: Extract details including "State License ID," "Name," "City," "NPI," "Tax ID," "Phone," "Fax," "Address," and "City, State ZIP." Note: "NPI" and "Phone" values will be located near the prescriber's name. If these values are not present, return them as empty strings.
+
+
+  ```json
+  "PRESCRIBER": {
+      "prescriber_state_lic_id": "ABC12345", "prescriber_name": "Dr. John Doe", "prescriber_npi": "", "prescriber_tax_id": "T12345", "prescriber_phone": "", "prescriber_fax": "(123) 789-0123", "prescriber_address": "456 Prescriber Ave", "prescriber_city_state_zip": "Prescriber City, State 67890", ...
+  }
+  ```
+
+
+4. Drug Details: Extract details such as "Date of Service," "J-Code," "Strength," "HCPCS," "Drug Name," "Direction," "ICD10," "Quantity," "Diagnosis," "Dose," etc., ensuring correct mapping of synonyms and context.
+
+
+  ```json
+  "DRUG": {
+      "date_of_service_to": "01/15/2024", "drug_name": "MedicineX", "drug_strength": "10mg", "hcpcs": "A1234", "direction_sig": "Take one tablet daily", "icd10": "Z01.01", "drug_quantity": "30", "diagnosis": "Headache", "drug_dose": "1 tablet", ...
+  }
+  ```
+
+
+5. Provider Details: Extract details such as "Fax,"  "Tax ID," "NPI," "Name," "Address," "Phone," and "City, State ZIP," ensuring correct mapping of synonyms and context.
+
+
+  ```json
+  "PROVIDER": {
+      "provider_fax": "(123) 789-0123", "provider_tax_id": "T67890", "provider_npi": "N67890", "provider_name": "Provider Name", "provider_address": "789 Provider Rd", "provider_phone": "(123) 890-1234", "provider_city_state_zip": "Provider City, State 67890", ...
+  }
+  ```
+Ensure correct mapping to respective categories and that the output strictly matches the JSON structure.

@@ -1,0 +1,129 @@
+Convert OCR results from prior authorization forms or lab reports into a structured JSON object.
+
+Sections:
+1. Patient
+2. Prescriber
+3. Provider
+4. Drug
+
+Section alias present/ not present in document:
+
+- Patient: Beneficiary,Cardholder,Client,Enrollee,Insured,MEMBER,Member,PATIENT,Patient,Subscriber
+- Prescriber: Doctor,MD,Ordering Provider,PRESCRIBER,PRESCRIBER ,Physician,Practitioner,Prescriber,Prescribing Physician,Prescribing Provider,Provider,Referring Physician,Requesting Provider,Requesting provider,Requestor,Signed By
+- Provider: Dispensing Pharmacy,PROVIDER,Pharmacy Information,Provider,Referred to Provider,Rendering Provider,Servicing Provider
+- DRUG - DRUG,Diagnosis,Drug,Medication,Prescribed
+
+sor Items to Extract:
+
+- PATIENT: patient_address,patient_city,patient_city_state_zip,patient_dob,patient_dob_v1,patient_eoc,patient_first_name,patient_group_number,patient_last_name,patient_member_id,patient_name,patient_phone,patient_state,patient_zip
+- PRESCRIBER: prescriber_address,prescriber_city,prescriber_city_state_zip,prescriber_fax,prescriber_first_name,prescriber_last_name,prescriber_name,prescriber_npi,prescriber_phone,prescriber_state,prescriber_state_lic_id,prescriber_tax_id,prescriber_zip
+- DRUG: date_of_service_from,date_of_service_to,diagnosis,direction_sig,drug_dose,drug_name,drug_quantity,drug_strength,hcpcs,icd10,j_code
+- PROVIDER: provider_address,provider_city,provider_city_state_zip,provider_fax,provider_name,provider_npi,provider_phone,provider_state,provider_tax_id,provider_zip
+
+sorItem actuals(Synonyms) present or not present in document:
+
+patient_name - Beneficiary name,Cardholder Full Name,Cardholder Name,Client Name,Enrollee First Name,Enrollee Full Name,Enrollee Name,Enrollee name,Enrollee's Name,Enrollee'sName,First Name,First Name ,Insured Name,Last Name,Member Full Name,Member Name,Member Name (first & last),Member name,Name,Name - First ,Name - Last,Patient,Patient First Name ,Patient Full Name,Patient Name,Patient Name ,Patient name,Patient's Name (Last, First),Patient's name,Subscriber Last Name,Subscriber Name;
+date_of_service_from - Anticipated Duration of Use,Anticipated duration of therapy,Date therapy Initiated,Dates of trial,Days Supply,Duration of Therapy,Duration of therapy,Expected Duration,Expected Duration of Therapy,Expected Length of Therapy,Expected duration of therapy,Expected length of Therapy,Expected length of therapy,Frequency,Length of Therapy,Length of Therapy ,Length of Therapy/# Refills,Requested duration,Start Date(mm/dd/yy);
+date_of_service_to - Days Supply,Length of Therapy,Length of therapy;
+diagnosis - DIAG,Diagnosis,Diagnosis ,Diagnosis & ICD Code,Diagnosis (ICD-10),Diagnosis Code Description,Diagnosis Code/Description(up to 2),Diagnosis name and code,Diagnosis related to Medication,Diagnosis relevant to this request,Diagnosis(submit documentation),Indication,Patient Diagnosis,Patient's Diagnosis,What is the Patient's diagnosis ?,What is the patient's diagnosis(please include ICD-10 codes)?;
+direction_sig - Direction/SIG,Directions,Directions for Use ,Directions for use,Directions for use ,Directions/Dosing Schedule,Directions/SIG,Frequency,Sig;
+drug_dose - Dosage Form,Dosage Interval,Dosage and Directions for Use,Dosage form,Dose and Directions,Dose and Frequency(Sig),Dose/ Strength,Dosing Instruction ,Dosing Schedule,Dosing Schedule ,Dosing Schedule (including length of therapy),Frequency,Total Units;
+drug_name - Drug,Drug ,Drug Name,Drug Name and Strength,Drug Name and Strength ,Drug Name and Strength Requested,Drug Requested,Drug Requested Name, Strength & Form,Drug name,Drug name & strength,Drug name and Strength,Drug requested,Drug requested (with Strength),Drug(s)Requested,Item ,Medication,Medication Name,Medication Name and Strength,Medication Name and Strength ,Medication Requested,Medication being Requested,Name,Prescribed,Procedure or Equipment Code/Description,Requested Drug name/ Strength,STARTER PACK requested (name/strength);
+drug_quantity - Days Supply,Last Qty,Qty,Qty Dispensed,Qty per 30 Days,Qty/day,Quantity,Quantity /day supply,Quantity Per Day,Quantity Per Month,Quantity Prescribed,Quantity Requested,Quantity dispensed,Quantity dispensed(including units),Quantity per 30 days ,Quantity per fill,Quantity per month or Quantity Limits;
+drug_strength - Drug Form/ Strength,Drug Strength,Form/Strength,Requested Drug name/ Strength,Strength,Strength and Route of Administration,Strength/Route of administration,Strength/quantity/dose;
+icd10 - Diagnosis Code,Diagnosis Code(ICD),Diagnosis(Written and ICD-10 code(s)) ,HCPCS/CPT/CDT/ICD-10 Codes,ICD - 10 Code:,ICD - 10 Codes,ICD 10 - Code,ICD 10 codes,ICD Code,ICD Code, if applicable,ICD Codes,ICD Diagnosis code,ICD-10,ICD-10 Diagnosis,ICD-10 DiagnosisCode,ICD-10(s),ICD-9/ICD-10;
+patient_address - Address,Address-Street,Cardholder Address,Cardholder Address Line 1,Cardholder Address Line 2,Enrollee Address,Enrollee Address Line 1,Enrollee Address Line 2 ,Enrollee street  address,Enrollee's Address,Member Address,Member Address Line 1 ,Member Address Line 2,Patient Address,Patient Address Line 1 ,Patient Address Line 2,Permanent street address (No P.O Box),Street Address,Subscriber Address,Subscriber Address Line 1,Subscriber Address Line 2;
+patient_city - Address-City,City;
+patient_city_state_zip - Cardholder city,state,zip,City, State , ZIP,City, State ZIP,City, State, Zip,City, state and ZIP code,City,State ZIP,Enrollee city,state,zip,Member city,state,zip,Subscriber city, state, zip;
+patient_dob - Cardholder DOB,DOB,DOB ,Date of Birth,Date of Birth ,Date of Birth(month-day-year),Date of birth,Dob,Enrollee DOB,Enrollee date of  birth,Member DOB,Member Date of Birth,Member Date of Birth ,Patient DOB,Patient date of birth,Patient's Date of Birth,Subscriber DOB;
+patient_eoc - EOC ID;
+patient_first_name - Cardholder First Name,Enrollee First Name,First Name,Member First Name,Patient First Name,Subscriber First Name;
+patient_group_number - Group ID Number,Group Number,Group number;
+patient_last_name - Cardholder Last Name,Enrollee Last Name,Last Name,Member Last Name,Patient Last Name,Subscriber Full Name;
+patient_member_id - BCBCAZ ID,Beneficiary ID,Beneficiary ID#,Cardholder ID,Client ID,Enrollee Id,Enrollee Member Id,Enrollee's Member ID Number,Enrollee's Plan ID Number,Enrollee's member ID #,Enrollee's member ID#,Health Insurance ID Number#,ID,ID #,ID Number,ID#,ID1,Insurance ID#,Kaiser Permanente Washington Member ID#,MBI ID,MBI Number,MBI/HICN ID,MMS ID Number,Medicaid Number,Member #,Member ID,Member ID ,Member ID #,Member ID Number,Member ID number,Member ID#,Member Id,Member Number,Member Optima #,Member Sentara #,Member UPMC Health Plan ID #,Member/ Insurance ID,Member/Subscriber Number,Member/subscriber Number,Member/subscriber number,Patient Group ID,Patient ID Number,Patient ID Number ,Patient ID#,Patient UPMC Health Plan ID Number,Patient UPMC Health Plan member ID#,Patient's ID,Subscriber Id,Subscriber/Member ID #,UPMC member ID number,UPMC member ID#;
+patient_name - Beneficiary name,Cardholder Full Name,Cardholder Name,Client Name,Enrollee First Name,Enrollee Full Name,Enrollee Name,Enrollee name,Enrollee's Name,Enrollee'sName,First Name,First Name ,Insured Name,Last Name,Member Full Name,Member Name,Member Name (first & last),Member name,Name,Name - First ,Name - Last,Patient,Patient First Name ,Patient Full Name,Patient Name,Patient Name ,Patient name,Patient's Name (Last, First),Patient's name,Subscriber Last Name,Subscriber Name;
+patient_phone - Member Phone,Member Phone ,Patient Phone,Patient Phone Number,Patient phone,Patient's Phone#,Phone,Phone #,Phone Number,Phone number,Primary Phone;
+patient_state - Address-State,State;
+patient_zip - Address-Zip,ZIP,ZIP Code,Zip,Zip Code,Zip code;
+prescriber_address - Address,Clinic/pharmacy/facility street address,Doctor Address,Doctor Address Line 1,Doctor Address Line 2,Office Address,Office Street Address,Ordering provider address,Physician Address,Physician Address Line1,Physician Address Line2,Prescriber Address,Prescriber Address Line 1,Prescriber Address Line 2,Provider Address,Provider Address Line 1,Provider Address Line 2,Referring Clinic address,Requesting Physician Address,Requestor Address,Requestor Address Line 1,Requestor Address Line 2,Street Address;
+prescriber_city - City,City;
+prescriber_city_state_zip - City, State ZIP,City, State, Zip,City, State, Zip code,City, state and ZIP code,City,State ZIP,City/state/ZIP,Doctor city,state,zip,Physician city,state,zip;
+prescriber_fax - Fascimile/Email,Fax,Fax #,Fax Number,Fax Number #,Fax Number (in HIPAA complaint area),Fax#,MD Fax Number,Office Fax,Office fax,Prescriber Fax,Prescriber Secure Fax,Provider fax #,Requesting Physician Fax,Secure Fax #;
+prescriber_first_name - Doctor First Name,First Name,Physician First Name,Prescriber First Name,Provider First Name,Provider first name ,Requestor First Name;
+prescriber_last_name - Doctor Last Name,Last Name,Physician Last Name,Prescriber Last Name,Provider Last Name,Provider last name ,Requestor Last Name;
+prescriber_name - Doctor,Doctor Full Name,Doctor Name,First Name,Last Name,MD Name,Name,Ordering provider name,Physician ,Physician Full Name,Physician Name,Prescriber,Prescriber Name,Prescriber Name ,Prescriber Name and Specialty,Prescriber name,Prescriber name and specialty,Prescribing Clinician,Prescribing Physician Name,Prescribing provider name,Print Name,Provider Name,Provider name,Provider name ,Provider's Name,Referring Physician's name,Requesting Physician/Provider's Name,Requesting Practitioner,Requesting Provider Name ,Requesting Provider's Name,Requestor Full Name,Requestor Name,Signed By;
+prescriber_npi - DEA or NPI #,Doctor NPI,MD NPI,NPI,NPI ,NPI #,NPI Number,NPI Number (individual),NPI or DEA,NPI#,NPI/DEA,Ordering provider NPI #,Physician NPI,Physician NPI #,Physician NPI or DEA Number,Prescriber ID,Prescriber ID Number,Prescriber NPI,Prescriber NPI#,Provider ID or NPI,Provider NPI,Provider NPI #,Requestor NPI;
+prescriber_phone- MD Phone Number,Office Phone,Office phone,Ph,Phone,Phone #,Phone Number,Phone Number ,Phone number,Phone number and ext,Phone#,Physician Phone Number,Prescriber Office Phone,Prescriber Phone,Prescriber Phone Number,Provider phone #,Requesting Physician Phone,Telephone Number,prescriber phone;
+prescriber_state - State;
+prescriber_state_lic_id - State Lic ID;
+prescriber_tax_id - Tax ID,Tax ID No;
+prescriber_zip - ZIP Code,Zip,Zip Code;
+provider_address - Address,Address of Referred to Provider ,Address-Street,Clinic/pharmacy/facility street address;
+provider_city - Address-City;
+provider_city_state_zip - City, State, Zip code;
+provider_fax - Fascimile/Email,Pharmacy Fax,Pharmacy Fax Number (in HIPAA complaint area);
+provider_name - Clinic/facility name,Name,Name - First,Name - Last,Name of Provider of Facility,PHARMACY INFORMATION,Pharmacy Name,Provider Name,Referred to Provider Information;
+provider_npi - NPI,NPI #,NPI/DEA;
+provider_phone - Phone,Phone Number,Phone number,Phone number and ext;
+provider_state - Address-State;
+provider_tax_id - Clinic/Organization's Tax ID#;
+provider_zip - Address-Zip;
+
+Extraction Output:
+
+   "Patient": {
+    "patient_address": "71405 Monroe Mountain",
+    "patient_city":"Johnburgh",
+    "patient_city_state_zip": "Johnburgh, Yemen, 89858",
+    "patient_dob": "03/31/2001",
+    "patient_eoc": "99998329",
+    "patient_first_name": "CHARLOTTE",
+    "patient_group_number": "nJ99426232",
+    "patient_last_name": "SPENCER",
+    "patient_member_id": "H40232414",
+    "patient_name": "CHARLOTTE SPENCER",
+    "patient_phone": "7355485696",
+    "patient_state": "Yemen",
+    "patient_zip": "89858"
+  },
+  "Prescriber": {
+    "prescriber_address": "10 AVANTA WAY STE 1",
+    "prescriber_city": "LAUREL",
+    "prescriber_city_state_zip": "LAUREL, MT, 590443030",
+    "prescriber_fax": "4062946701",
+    "prescriber_first_name": "ERIC L",
+    "prescriber_last_name": "BELNAP",
+    "prescriber_name": "ERIC L BELNAP",
+    "prescriber_npi": "1841719069",
+    "prescriber_state_lic_id": "190 518 0176",
+    "prescriber_phone": "4062946701"
+  },
+  "Drug": {
+    "date_of_service_from": null,
+    "date_of_service_to": null,
+    "diagnosis": null,
+    "direction_sig": "Use two sprays in each nostril once daily for allergic rhinitis.",
+    "drug_dose": "1000mg/5ml",
+    "drug_name": "Ceftriaxone",
+    "drug_quantity": null,
+    "drug_strength": "1000mg/5ml",
+    "hcpcs": null,
+    "icd10": null
+  },
+  "Provider": {
+    "provider_address": null,
+    "provider_city": null,
+    "provider_city_state_zip": null,
+    "provider_fax": null,
+    "provider_name": null,
+    "provider_npi": null,
+    "provider_phone": null,
+    "provider_state": null,
+    "provider_tax_id": null,
+    "provider_zip": null
+  }
+
+Note:
+Don't alter the structure of the Json mentioned
+Maintain the structure don't skip sorItems and sections name.
+If fields not have values or are not present for the sorItem and section, then return sorItem and sections with empty values, don't leave it

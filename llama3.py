@@ -5,7 +5,9 @@ import gc
 from paddleocr import PaddleOCR
 from pydantic import BaseModel
 
-model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+# model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+
+model_id = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
 
 # pipeline = transformers.pipeline(
 #     "text-generation",
@@ -19,7 +21,7 @@ model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 
 pipeline = transformers.pipeline(
     "text-generation",
-    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    model=model_id,
     model_kwargs={"torch_dtype": torch.bfloat16},
     device="cuda",
 )
@@ -30,7 +32,13 @@ paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False, show_
 
 class LlamaRequest(BaseModel):
     inputFilePath: str
-    prompt: str
+    promptFilePath: str
+
+
+def get_file_content(file_path):
+    with open(file_path, 'r') as file:
+        text = file.read()
+        return text
 
 
 def generate_tokens_paddle_(image_path: str) -> str:
@@ -50,8 +58,9 @@ def generate_tokens_paddle_(image_path: str) -> str:
 def read_item(request: LlamaRequest):
     try:
         ocr_result = generate_tokens_paddle_(request.inputFilePath)
+        prompt_val = get_file_content(request.promptFilePath)
         messages = [
-            {"role": "system", "content": request.prompt},
+            {"role": "system", "content": prompt_val},
             {"role": "user", "content": ocr_result},
         ]
 
@@ -59,7 +68,6 @@ def read_item(request: LlamaRequest):
             messages,
             tokenize=False,
             add_generation_prompt=True,
-            format="JSON"
         )
 
         terminators = [
