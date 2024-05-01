@@ -104,7 +104,9 @@ def process_files_in_directory(request: ApiRequest):
         else:
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder, exist_ok=True)
-            json_file_path = output_folder
+
+            filename = os.path.basename(file)
+            json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
         llama_request = LlamaRequest(inputFilePath=file, promptFilePath="response_prompt_v2.txt")
