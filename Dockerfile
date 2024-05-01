@@ -1,5 +1,18 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12.1
+
+#Use existing
+FROM zsubscription/pr1.krypton:latest
+
+# Install new base image
+# FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update \
+    && apt-get install -y poppler-utils vim curl pip git libgl1 libglib2.0-0\
+    && apt-get clean && apt-get install libdmtx0b
+
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH
 
 # Set the working directory in the container
 WORKDIR /app
@@ -7,7 +20,7 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY app /app
 
-# Install any needed dependencies specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements_v1.txt
+RUN pip install --upgrade pip
 
-RUN pip install bitsandbytes==0.43.1 --global-option="build_ext" --global-option="--gpu"
+# Install any needed dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
