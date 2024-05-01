@@ -31,6 +31,8 @@ class ModelLoad:
                 model_kwargs={"torch_dtype": torch.bfloat16},
                 device="cuda",
             )
+            logging.info("The krypton chat model has been successfully loaded")
+            return pipeline
         except Exception as ex:
             logging.error("Error in loading krypton chat model")
             raise ex
