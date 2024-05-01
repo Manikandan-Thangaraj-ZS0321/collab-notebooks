@@ -118,3 +118,5 @@ def process_files_in_directory(request: ApiRequest):
 
         with open(json_file_path, "w") as json_file:
             json.dump(json_response, json_file, indent=4)  # Format JSON with indentation
+
+        return json_response

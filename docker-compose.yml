@@ -13,10 +13,26 @@ services:
       TOKENIZERS_PARALLELISM: "true"
       ADMIN_WORKERS: 1
       ADMIN_TIMEOUT: 6000
-    command: poetry run gunicorn app.llama3:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:7999 --timeout 6000  --reload
+    command: poetry run gunicorn app.llm_test_files:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:7999 --timeout 6000  --reload
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
               capabilities: [ gpu ]
+    networks:
+      intics:
+        ipv4_address: 172.20.0.88
+        aliases:
+          - pr1.intics
+
+
+networks:
+  intics:
+    name: pr1.intics
+    external: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/19
+          gateway: 172.20.0.1
