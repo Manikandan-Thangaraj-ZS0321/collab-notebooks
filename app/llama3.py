@@ -1,33 +1,13 @@
-from fastapi import FastAPI
-import transformers
 import torch
 import gc
-from paddleocr import PaddleOCR
+
 from pydantic import BaseModel
+from fastapi import FastAPI
+from model_load import ModelLoad
 
-# model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
-
-model_id = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
-
-# pipeline = transformers.pipeline(
-#     "text-generation",
-#     model=model_id,
-#     model_kwargs={
-#         "torch_dtype": torch.float16,
-#         "quantization_config": {"load_in_4bit": True},
-#         "low_cpu_mem_usage": True,
-#     },
-# )
-
-pipeline = transformers.pipeline(
-    "text-generation",
-    model=model_id,
-    model_kwargs={"torch_dtype": torch.bfloat16},
-    device="cuda",
-)
-
+pipeline = ModelLoad.krypton_chat_model_load()
 app = FastAPI()
-paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False, show_log=False)
+paddle_ocr = ModelLoad.paddleocr_model_load()
 
 
 class LlamaRequest(BaseModel):

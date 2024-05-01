@@ -1,23 +1,19 @@
-from fastapi import FastAPI
 import torch
 import gc
-from paddleocr import PaddleOCR
+
+from fastapi import FastAPI
 from pydantic import BaseModel
 from unsloth import FastLanguageModel
 from transformers import TextStreamer
+from model_load import ModelLoad
 
-model_id = "unsloth/Meta-Llama-3-8B-Instruct"
 
-max_seq_length = 2048
-dtype = None  # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
-load_in_4bit = True
+model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
+FastLanguageModel.for_inference(model)
 
-model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name="unsloth/llama-3-8b-Instruct",
-    max_seq_length=max_seq_length,
-    dtype=dtype,
-    load_in_4bit=False
-)
+paddle_ocr = ModelLoad.paddleocr_model_load()
+
+app = FastAPI()
 
 alpaca_prompt = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
 
@@ -30,13 +26,8 @@ Input:
 Response:
 {}"""
 
-FastLanguageModel.for_inference(model)
 
-app = FastAPI()
-paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False, show_log=False)
-
-
-class LlamaRequest(BaseModel):
+class KryptonRequest(BaseModel):
     inputFilePath: str
     promptFilePath: str
 
@@ -47,7 +38,7 @@ def get_file_content(file_path):
         return text
 
 
-def generate_tokens_paddle_(image_path: str) -> str:
+def generate_tokens_paddle(image_path: str) -> str:
     try:
         result_paddle = paddle_ocr.ocr(image_path, cls=True)
         extracted_text = ""
@@ -60,10 +51,10 @@ def generate_tokens_paddle_(image_path: str) -> str:
         raise e
 
 
-@app.post("/llama3")
-def read_item(request: LlamaRequest):
+@app.post("/chat/krypton")
+def read_item(request: KryptonRequest):
     try:
-        ocr_result = generate_tokens_paddle_(request.inputFilePath)
+        ocr_result = generate_tokens_paddle(request.inputFilePath)
         prompt_val = get_file_content(request.promptFilePath)
 
         inputs = tokenizer(
@@ -80,6 +71,7 @@ def read_item(request: LlamaRequest):
         generated_responses = tokenizer.batch_decode(outputs)
 
         response = llm_post_processing_latest(generated_responses)
+        # response = generated_responses[0]["Response:"]
         return response
 
     except Exception as ex:
