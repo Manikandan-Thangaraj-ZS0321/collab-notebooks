@@ -16,6 +16,7 @@ model, tokenizer = FastLanguageModel.from_pretrained(
     model_name="unsloth/llama-3-8b-Instruct",
     max_seq_length=max_seq_length,
     dtype=dtype,
+    load_in_4bit=False
 )
 
 alpaca_prompt = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
