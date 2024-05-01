@@ -9,3 +9,5 @@ COPY app /app
 
 # Install any needed dependencies specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_v1.txt
+
+RUN pip install bitsandbytes==0.43.1 --global-option="build_ext" --global-option="--gpu"
