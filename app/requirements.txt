@@ -126,7 +126,7 @@ trl==0.8.6
 typing_extensions==4.11.0
 tyro==0.8.3
 tzdata==2024.1
-unsloth @ git+https://github.com/unslothai/unsloth.git@72aee4a3a128268c3d1e5cef249626897996645c
+unsloth[cu121] @ git+https://github.com/unslothai/unsloth.git@72aee4a3a128268c3d1e5cef249626897996645c
 urllib3==2.2.1
 uvicorn==0.29.0
 visualdl==2.5.3
