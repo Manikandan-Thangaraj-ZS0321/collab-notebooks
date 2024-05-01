@@ -9,6 +9,3 @@ COPY app /app
 
 # Install any needed dependencies specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_v1.txt
-
-# Run python script when the container launches
-CMD ["python", "your_script.py"]

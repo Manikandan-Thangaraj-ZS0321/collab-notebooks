@@ -1,13 +1,22 @@
 import torch
 import gc
+import os
+import json
+import time
 
 from pydantic import BaseModel
 from fastapi import FastAPI
 from model_load import ModelLoad
+from typing import List
 
 pipeline = ModelLoad.krypton_chat_model_load()
 app = FastAPI()
 paddle_ocr = ModelLoad.paddleocr_model_load()
+
+
+class ApiRequest(BaseModel):
+    files: List[str]
+    outputFolder: str
 
 
 class LlamaRequest(BaseModel):
@@ -34,8 +43,7 @@ def generate_tokens_paddle_(image_path: str) -> str:
         raise e
 
 
-@app.post("/chat/krypton")
-def read_item(request: LlamaRequest):
+def process_file(request: LlamaRequest):
     try:
         ocr_result = generate_tokens_paddle_(request.inputFilePath)
         prompt_val = get_file_content(request.promptFilePath)
@@ -71,3 +79,43 @@ def read_item(request: LlamaRequest):
     finally:
         gc.collect()
         torch.cuda.empty_cache()
+
+
+def get_json_data(text):
+    start_index = text.find('{')
+    end_index = text.rfind('}')
+    json_content = text[start_index:end_index + 1]
+    try:
+        json_data = json.loads(json_content)
+        return json_data
+    except json.JSONDecodeError as e:
+        return json_content
+
+
+@app.post("/chat/krypton/files")
+def process_files_in_directory(request: ApiRequest):
+    files = request.files
+    output_folder = request.outputFolder
+
+    for file in files:
+
+        if output_folder == "":
+            json_file_path = os.path.splitext(file)[0] + ".json"
+        else:
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder, exist_ok=True)
+            json_file_path = output_folder
+
+        # Process the image
+        llama_request = LlamaRequest()
+        llama_request.inputFilePath = file
+        llama_request.promptFilePath = "response_prompt_v2.txt"
+
+        llama_response = process_file(llama_request)
+
+        time.sleep(2)
+
+        json_response = get_json_data(llama_response)
+
+        with open(json_file_path, "w") as json_file:
+            json.dump(json_response, json_file, indent=4)  # Format JSON with indentation
