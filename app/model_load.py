@@ -68,4 +68,4 @@ class ModelLoad:
 
     @staticmethod
     def paddleocr_model_load():
-        return PaddleOCR(use_angle_cls=True, lang='en', enable_mkldnn=False, show_log=False)
+        return PaddleOCR(use_angle_cls=True, lang='en', show_log=False, use_gpu=True)
