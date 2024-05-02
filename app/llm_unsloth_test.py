@@ -71,10 +71,10 @@ def process_file(request: LlamaRequest):
 
         # use a TextStreamer for continuous inference - so you can see the generation token by token
         # text_streamer = TextStreamer(tokenizer)
-        # outputs = model.generate(**inputs, streamer=text_streamer, max_new_tokens=2048)
+        # outputs = model.generate(**inputs, streamer=text_streamer, max_new_tokens=2048, temperature=0.1)
 
-        outputs = model.generate(**inputs, max_new_tokens=2048, use_cache=True)
-        generated_responses = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
+        outputs = model.generate(**inputs, max_new_tokens=2048, use_cache=True, temperature=0.1)
+        generated_responses = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
         response = llm_post_processing_latest(generated_responses)
         return response
