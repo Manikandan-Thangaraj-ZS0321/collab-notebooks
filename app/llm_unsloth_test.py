@@ -118,6 +118,7 @@ def process_files_in_directory(request: ApiRequest):
     files = request.files
     output_folder = request.outputFolder
 
+    json_response = ""
     for file in files:
 
         if output_folder == "":
