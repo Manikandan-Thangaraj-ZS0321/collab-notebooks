@@ -58,7 +58,7 @@ class ModelLoad:
                 max_seq_length=max_seq_length,
                 dtype=dtype,
                 load_in_4bit=load_in_4bit,
-                use_auth_token=HF_TOKEN
+                token=HF_TOKEN
             )
             logging.info("The krypton chat model has been successfully loaded")
             return model, tokenizer
