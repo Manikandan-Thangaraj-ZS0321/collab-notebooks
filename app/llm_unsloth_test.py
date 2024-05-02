@@ -126,7 +126,7 @@ def process_files_in_directory(request: ApiRequest):
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder, exist_ok=True)
 
-            filename = os.path.basename(file)
+            filename = os.path.splitext(os.path.basename(file))[0]
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
@@ -138,4 +138,4 @@ def process_files_in_directory(request: ApiRequest):
         with open(json_file_path, "w") as json_file:
             json.dump(json_response, json_file, indent=4)  # Format JSON with indentation
 
-        return json_response
+    return json_response
