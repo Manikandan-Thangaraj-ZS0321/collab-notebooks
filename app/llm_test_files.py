@@ -30,7 +30,7 @@ def get_file_content(file_path):
         return text
 
 
-def generate_tokens_paddle_(image_path: str) -> str:
+def generate_tokens_paddle(image_path: str) -> str:
     try:
         result_paddle = paddle_ocr.ocr(image_path, cls=True)
         extracted_text = ""
@@ -120,3 +120,8 @@ def process_files_in_directory(request: ApiRequest):
             json.dump(json_response, json_file, indent=4)  # Format JSON with indentation
 
         return json_response
+
+
+@app.post("/argon/text")
+def text_extraction_by_paddle(image_path: str):
+    return generate_tokens_paddle(image_path)

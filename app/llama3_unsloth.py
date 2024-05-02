@@ -83,6 +83,11 @@ def read_item(request: KryptonRequest):
         torch.cuda.empty_cache()
 
 
+@app.post("/argon/text")
+def text_extraction_by_paddle(image_path: str):
+    return generate_tokens_paddle(image_path)
+
+
 def llm_post_processing_latest(generated_responses: str):
     if generated_responses is not None:
         for generated_response in generated_responses:

@@ -21,7 +21,7 @@ def get_file_content(file_path):
         return text
 
 
-def generate_tokens_paddle_(image_path: str) -> str:
+def generate_tokens_paddle(image_path: str) -> str:
     try:
         result_paddle = paddle_ocr.ocr(image_path, cls=True)
         extracted_text = ""
@@ -71,3 +71,8 @@ def read_item(request: LlamaRequest):
     finally:
         gc.collect()
         torch.cuda.empty_cache()
+
+
+@app.post("/argon/text")
+def text_extraction_by_paddle(image_path: str):
+    return generate_tokens_paddle(image_path)

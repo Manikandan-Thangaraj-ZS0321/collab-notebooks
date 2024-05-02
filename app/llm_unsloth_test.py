@@ -106,6 +106,11 @@ def llm_post_processing_latest(generated_responses: str):
         return []
 
 
+@app.post("/argon/text")
+def text_extraction_by_paddle(image_path: str):
+    return generate_tokens_paddle(image_path)
+
+
 @app.post("/chat/krypton/files")
 def process_files_in_directory(request: ApiRequest):
     files = request.files
