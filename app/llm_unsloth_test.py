@@ -133,8 +133,6 @@ def process_files_in_directory(request: ApiRequest):
         llama_request = LlamaRequest(inputFilePath=file, promptFilePath="response_prompt_v2.txt")
         llama_response = process_file(llama_request)
 
-        time.sleep(2)
-
         json_response = get_json_data(llama_response)
 
         with open(json_file_path, "w") as json_file:
