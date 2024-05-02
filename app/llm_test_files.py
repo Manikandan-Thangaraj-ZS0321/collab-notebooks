@@ -97,6 +97,7 @@ def process_files_in_directory(request: ApiRequest):
     files = request.files
     output_folder = request.outputFolder
 
+    json_response = ""
     for file in files:
 
         if output_folder == "":
@@ -119,7 +120,7 @@ def process_files_in_directory(request: ApiRequest):
         with open(json_file_path, "w") as json_file:
             json.dump(json_response, json_file, indent=4)  # Format JSON with indentation
 
-        return json_response
+    return json_response
 
 
 @app.post("/argon/text")
