@@ -1,3 +1,6 @@
+This repository includes files exposing the meta/Llama3 -8B-Instruct model and its quantized unsloth models as API endpoints.
+Also includes the jupyter notebook for finetuning
+
 ## Model Details - meta-llama/Meta-Llama-3-8B-Instruct
 
 Meta developed and released the Meta Llama 3 family of large language models (LLMs), a collection of pretrained and instruction tuned generative text models in 8 and 70B sizes. The Llama 3 instruction tuned models are optimized for dialogue use cases and outperform many of the available open source chat models on common industry benchmarks. Further, in developing these models, we took great care to optimize helpfulness and safety. 
