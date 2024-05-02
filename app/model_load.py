@@ -1,11 +1,12 @@
 import torch
 import logging
 import transformers
+import os
 
 from unsloth import FastLanguageModel
 from paddleocr import PaddleOCR
 
-HF_TOKEN= "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"
+HF_TOKEN = os.environ['HF_TOKEN']
 #model_id = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
 #unsloth_model = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
 
@@ -57,7 +58,7 @@ class ModelLoad:
                 max_seq_length=max_seq_length,
                 dtype=dtype,
                 load_in_4bit=load_in_4bit,
-                token=HF_TOKEN
+                use_auth_token=HF_TOKEN
             )
             logging.info("The krypton chat model has been successfully loaded")
             return model, tokenizer
