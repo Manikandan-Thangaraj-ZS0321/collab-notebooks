@@ -69,6 +69,11 @@ provider_state - Address-State;
 provider_tax_id - Clinic/Organization's Tax ID#;
 provider_zip - Address-Zip;
 
+Note:
+Don't alter the structure of the Json mentioned
+Maintain the structure don't skip sorItems and sections name.
+If fields not have values or are not present for the sorItem and section, then return sorItem and sections with empty values, don't leave it
+
 Extraction Output:
 
    "Patient": {
@@ -122,8 +127,3 @@ Extraction Output:
     "provider_tax_id": null,
     "provider_zip": null
   }
-
-Note:
-Don't alter the structure of the Json mentioned
-Maintain the structure don't skip sorItems and sections name.
-If fields not have values or are not present for the sorItem and section, then return sorItem and sections with empty values, don't leave it
