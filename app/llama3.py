@@ -37,7 +37,7 @@ def generate_tokens_paddle(image_path: str) -> str:
 @app.post("/chat/krypton")
 def read_item(request: LlamaRequest):
     try:
-        ocr_result = generate_tokens_paddle_(request.inputFilePath)
+        ocr_result = generate_tokens_paddle(request.inputFilePath)
         prompt_val = get_file_content(request.promptFilePath)
         messages = [
             {"role": "system", "content": prompt_val},
