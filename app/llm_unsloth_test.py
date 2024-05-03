@@ -13,17 +13,7 @@ from typing import List
 model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
 app = FastAPI()
 paddle_ocr = ModelLoad.paddleocr_model_load()
-
-alpaca_prompt = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
-
-Instruction:
-{}
-
-Input:
-{}
-
-Response:
-{}"""
+EOS_TOKEN = tokenizer.eos_token
 
 
 class ApiRequest(BaseModel):
@@ -60,23 +50,42 @@ def process_file(request: LlamaRequest):
         ocr_result = generate_tokens_paddle(request.inputFilePath)
         prompt_val = get_file_content(request.promptFilePath)
 
-        inputs = tokenizer(
-            [
-                alpaca_prompt.format(
-                    prompt_val,  # instruction
-                    ocr_result,  # input
-                    "",  # output - leave this blank for generation!
-                )
-            ], return_tensors="pt").to("cuda")
+        messages = [
+            {"role": "system", "content": prompt_val},
+            {"role": "user", "content": ocr_result},
+            {"role": "assistant:", "content": ""},
+        ]
+
+        terminators = [
+            tokenizer.eos_token_id,
+            tokenizer.convert_tokens_to_ids("<|eot_id|>")
+        ]
+
+        prompt = tokenizer.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_tensors="pt",
+            map_eos_token=True,
+        ).to("cuda")
+
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
 
         # use a TextStreamer for continuous inference - so you can see the generation token by token
         # text_streamer = TextStreamer(tokenizer)
-        # outputs = model.generate(**inputs, streamer=text_streamer, max_new_tokens=2048, temperature=0.1)
+        # outputs = model.generate(input_ids=prompt, streamer=text_streamer, max_new_tokens=2048, use_cache=True,
+        #                                  pad_token_id=tokenizer.pad_token_id)
 
-        outputs = model.generate(**inputs, max_new_tokens=2048, use_cache=True, temperature=0.1)
+        outputs = model.generate(input_ids=prompt, max_new_tokens=2048, use_cache=True,
+                                 pad_token_id=tokenizer.pad_token_id)
+
         generated_responses = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        response = llm_post_processing_latest(generated_responses)
+        assistant_response = generated_responses[0]
+
+        response = llm_post_processing_latest(assistant_response)
+
         return response
 
     except Exception as ex:
@@ -97,13 +106,12 @@ def get_json_data(text):
         return json_content
 
 
-def llm_post_processing_latest(generated_responses: str):
-    if generated_responses is not None:
-        for generated_response in generated_responses:
-            start_index = generated_response.find("Response:") + len("Response:")
-            end_index = generated_response.find("</s>", start_index)
-            response_section = generated_response[start_index:end_index].strip()
-            return response_section
+def llm_post_processing_latest(generated_response: str):
+    if generated_response is not None:
+        start_index = generated_response.find("assistant") + len("assistant")
+        end_index = generated_response.find("</s>", start_index)
+        response_section = generated_response[start_index:end_index].strip()
+        return response_section
     else:
         return []
 

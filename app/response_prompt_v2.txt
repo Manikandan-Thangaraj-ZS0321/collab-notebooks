@@ -97,7 +97,11 @@ Extraction Output:
     "prescriber_name": "ERIC L BELNAP",
     "prescriber_npi": "1841719069",
     "prescriber_state_lic_id": "190 518 0176",
-    "prescriber_phone": "4062946701"
+    "prescriber_phone": "4062946701",
+    "prescriber_zip": null,
+    "prescriber_state": null,
+    "prescriber_tax_id": null
+
   },
   "Drug": {
     "date_of_service_from": null,
@@ -109,7 +113,8 @@ Extraction Output:
     "drug_quantity": null,
     "drug_strength": "1000mg/5ml",
     "hcpcs": null,
-    "icd10": null
+    "icd10": null,
+    "j_code": null
   },
   "Provider": {
     "provider_address": null,
