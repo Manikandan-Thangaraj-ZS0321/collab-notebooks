@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from model_load import ModelLoad
 from transformers import TextStreamer
 from typing import List
+#from outlines import generate
 
 model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
 app = FastAPI()
@@ -139,7 +140,7 @@ def process_files_in_directory(request: ApiRequest):
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
-        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="response_prompt_v2.txt")
+        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt")
         llama_response = process_file(llama_request)
 
         json_response = get_json_data(llama_response)

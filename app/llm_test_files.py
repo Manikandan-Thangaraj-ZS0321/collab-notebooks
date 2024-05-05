@@ -110,7 +110,7 @@ def process_files_in_directory(request: ApiRequest):
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
-        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="response_prompt_v2.txt")
+        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt")
         llama_response = process_file(llama_request)
 
         time.sleep(2)

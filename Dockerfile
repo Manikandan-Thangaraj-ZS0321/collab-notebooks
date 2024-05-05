@@ -19,6 +19,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY app /app
+COPY requirements.txt /app/requirements.txt
 
 RUN pip install --upgrade pip
 
