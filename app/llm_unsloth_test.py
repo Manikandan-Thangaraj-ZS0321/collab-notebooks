@@ -2,7 +2,7 @@ import torch
 import gc
 import os
 import json
-import time
+import paddle
 
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -10,6 +10,8 @@ from model_load import ModelLoad
 from transformers import TextStreamer
 from typing import List
 #from outlines import generate
+from logger_handler import logger
+
 
 model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
 app = FastAPI()
@@ -43,10 +45,16 @@ def generate_tokens_paddle(image_path: str) -> str:
                 extracted_text += txt + "\n"
         return extracted_text
     except Exception as e:
+        logger.error("Error in generating tokens using paddle {}".format(e))
         raise e
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()
+        paddle.device.cuda.empty_cache()
 
 
 def process_file(request: LlamaRequest):
+    filename = os.path.basename(request.inputFilePath)
     try:
         ocr_result = generate_tokens_paddle(request.inputFilePath)
         prompt_val = get_file_content(request.promptFilePath)
@@ -81,6 +89,7 @@ def process_file(request: LlamaRequest):
         outputs = model.generate(input_ids=prompt, max_new_tokens=2048, use_cache=True,
                                  pad_token_id=tokenizer.pad_token_id)
 
+        logger.info("completed response generation for file {}".format(filename))
         generated_responses = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
         assistant_response = generated_responses[0]
@@ -90,6 +99,7 @@ def process_file(request: LlamaRequest):
         return response
 
     except Exception as ex:
+        logger.error("Error in getting results for file {} with exception {}".format(filename, ex))
         raise ex
     finally:
         gc.collect()
@@ -102,8 +112,10 @@ def get_json_data(text):
     json_content = text[start_index:end_index + 1]
     try:
         json_data = json.loads(json_content)
+        logger.info("successful in loading data as json")
         return json_data
     except json.JSONDecodeError as e:
+        logger.error("Error in converting data to json format with exception {}".format(e))
         return json_content
 
 
@@ -112,8 +124,10 @@ def llm_post_processing_latest(generated_response: str):
         start_index = generated_response.find("assistant") + len("assistant")
         end_index = generated_response.find("</s>", start_index)
         response_section = generated_response[start_index:end_index].strip()
+        logger.info("completed the post processing of llm response")
         return response_section
     else:
+        logger.error("Error in post processing results - generated response is none")
         return []
 
 
