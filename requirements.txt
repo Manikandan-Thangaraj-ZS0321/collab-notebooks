@@ -134,3 +134,4 @@ Werkzeug==3.0.2
 xformers
 xxhash==3.4.1
 yarl==1.9.4
+llama-cpp-python
