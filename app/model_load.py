@@ -1,11 +1,11 @@
 import torch
-import logging
 import transformers
 import os
 
 from unsloth import FastLanguageModel
 from paddleocr import PaddleOCR
 from llama_cpp import Llama
+from logger_handler import logger
 
 HF_TOKEN = os.environ['HF_TOKEN']
 #model_id = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
@@ -17,6 +17,7 @@ HF_TOKEN = os.environ['HF_TOKEN']
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 unsloth_model = "unsloth/llama-3-8b-Instruct"
 llama_cpp_model = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
+
 
 class ModelLoad:
     def __init__(self):
@@ -42,10 +43,10 @@ class ModelLoad:
                 device="cuda",
                 token=HF_TOKEN
             )
-            logging.info("The krypton chat model has been successfully loaded")
+            logger.info("The krypton chat model has been successfully loaded")
             return pipeline
         except Exception as ex:
-            logging.error("Error in loading krypton chat model")
+            logger.error("Error in loading krypton chat model")
             raise ex
 
     @staticmethod
@@ -62,10 +63,10 @@ class ModelLoad:
                 load_in_4bit=load_in_4bit,
                 token=HF_TOKEN
             )
-            logging.info("The krypton chat model has been successfully loaded")
+            logger.info("The krypton chat model has been successfully loaded")
             return model, tokenizer
         except Exception as ex:
-            logging.error("Error in loading krypton chat model")
+            logger.error("Error in loading krypton chat model")
             raise ex
 
     @staticmethod
@@ -82,10 +83,10 @@ class ModelLoad:
                 n_threads=8,  # The number of CPU threads to use, tailor to your system and the resulting performance
                 n_gpu_layers=1  # The number of layers to offload to GPU, if you have GPU acceleration available
             )
-            logging.info("The krypton chat model has been successfully loaded")
+            logger.info("The krypton chat model has been successfully loaded")
             return llm
         except Exception as ex:
-            logging.error("Error in loading krypton chat model")
+            logger.error("Error in loading krypton chat model")
             raise ex
 
     @staticmethod
