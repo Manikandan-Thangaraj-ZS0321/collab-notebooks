@@ -44,28 +44,33 @@ def read_item(request: LlamaRequest):
             {"role": "user", "content": ocr_result},
         ]
 
-        prompt = pipeline.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-        )
+        # prompt = pipeline.tokenizer.apply_chat_template(
+        #     messages,
+        #     tokenize=False,
+        #     add_generation_prompt=True,
+        # )
+        #
+        # terminators = [
+        #     pipeline.tokenizer.eos_token_id,
+        #     pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
+        # ]
 
-        terminators = [
-            pipeline.tokenizer.eos_token_id,
-            pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
-        ]
+        prompt = '[INST] Hi there, write me 3 random quotes [/INST]'
 
-        output = pipeline(
+        stream = pipeline(
             prompt,  # Prompt
-            max_tokens=512,  # Generate up to 512 tokens
+            max_tokens=4046,  # Generate up to 512 tokens
             stop=["</s>"],
             # Example stop token - not necessarily correct for this specific model! Please check before using.
-            echo=True  # Whether to echo the prompt
+            echo=False  # Whether to echo the prompt
         )
-        print(output)
+        result = ""
+        for output in stream:
+            result += output['choices'][0]['text']
+            print(output['choices'][0]['text'], end="")
 
         # prompt_result = outputs[0]["generated_text"][len(prompt):]
-        prompt_result = output
+        prompt_result = result
         return prompt_result
 
     except Exception as ex:

@@ -16,8 +16,8 @@ HF_TOKEN = os.environ['HF_TOKEN']
 
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 unsloth_model = "unsloth/llama-3-8b-Instruct"
-llama_cpp_model = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
-
+# llama_cpp_model = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
+llama_cpp_model = "/home/hera/workspace/llama3/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
 
 class ModelLoad:
     def __init__(self):
@@ -73,7 +73,7 @@ class ModelLoad:
     def krypton_chat_llamacpp_model_load():
 
         try:
-            max_seq_length = 2048
+            max_seq_length = 4046
             dtype = None
             load_in_4bit = True
             llm = Llama(
