@@ -20,6 +20,7 @@ app = FastAPI()
 class ApiRequest(BaseModel):
     files: List[str]
     outputFolder: str
+    textExtractionModel: str
 
 
 class LlamaRequest(BaseModel):
@@ -86,7 +87,7 @@ def process_files_in_directory(request: ApiRequest):
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
-        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt")
+        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt", textExtractionModel=request.textExtractionModel)
         llama_response = process_file(llama_request)
 
         json_response = get_json_data(llama_response)

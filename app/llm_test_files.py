@@ -3,28 +3,31 @@ import gc
 import os
 import json
 import time
-import paddle
-
 
 from pydantic import BaseModel
 from fastapi import FastAPI
 from model_load import ModelLoad
 from typing import List
 from logger_handler import logger
+from text_extraction import TextExtraction
 
 pipeline = ModelLoad.krypton_chat_model_load()
+text_argon_model = TextExtraction.argon_text_model_load()
+text_xenon_model = TextExtraction.xenon_text_model_load()
+
 app = FastAPI()
-paddle_ocr = ModelLoad.paddleocr_model_load()
 
 
 class ApiRequest(BaseModel):
     files: List[str]
     outputFolder: str
+    textExtractionModel: str
 
 
 class LlamaRequest(BaseModel):
     inputFilePath: str
     promptFilePath: str
+    textExtractionModel: str
 
 
 def get_file_content(file_path):
@@ -33,28 +36,16 @@ def get_file_content(file_path):
         return text
 
 
-def generate_tokens_paddle(image_path: str) -> str:
-    try:
-        result_paddle = paddle_ocr.ocr(image_path, cls=True)
-        extracted_text = ""
-        for result in result_paddle:
-            for record in result:
-                txt = record[1][0]
-                extracted_text += txt + "\n"
-        return extracted_text
-    except Exception as e:
-        logger.error("Error in generating tokens using paddle {}".format(e))
-        raise e
-    finally:
-        gc.collect()
-        torch.cuda.empty_cache()
-        paddle.device.cuda.empty_cache()
-
-
 def process_file(request: LlamaRequest):
     filename = os.path.basename(request.inputFilePath)
     try:
-        ocr_result = generate_tokens_paddle(request.inputFilePath)
+        text_extraction_model = request.textExtractionModel
+
+        if text_extraction_model == "ARGON":
+            ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
+        else:
+            ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
+
         prompt_val = get_file_content(request.promptFilePath)
         messages = [
             {"role": "system", "content": prompt_val},
@@ -123,7 +114,7 @@ def process_files_in_directory(request: ApiRequest):
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
-        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt")
+        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt", textExtractionModel=request.textExtractionModel)
         llama_response = process_file(llama_request)
 
         time.sleep(2)
@@ -138,4 +129,10 @@ def process_files_in_directory(request: ApiRequest):
 
 @app.post("/argon/text")
 def text_extraction_by_paddle(image_path: str):
-    return generate_tokens_paddle(image_path)
+    return TextExtraction.text_extraction_argon(image_path, text_argon_model)
+
+
+@app.post("/xenon/text")
+def text_extraction_by_xenon(image_path: str):
+    return TextExtraction.text_extraction_argon(image_path, text_xenon_model)
+
