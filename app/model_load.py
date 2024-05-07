@@ -17,7 +17,7 @@ HF_TOKEN = os.environ['HF_TOKEN']
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 unsloth_model = "unsloth/llama-3-8b-Instruct"
 quant_cpp_model = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
-llama_cpp_model = "/home/hera/workspace/llama3/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
+llama_cpp_model = "/data/models/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
 
 
 class ModelLoad:
