@@ -14,7 +14,6 @@ from text_extraction import TextExtraction
 
 
 model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
-pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
 

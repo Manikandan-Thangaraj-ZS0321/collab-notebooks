@@ -9,7 +9,7 @@ FROM zsubscription/pr1.krypton:latest
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-    && apt-get install -y poppler-utils vim curl pip git libgl1 libglib2.0-0\
+    && apt-get install -y poppler-utils vim curl pip git libgl1 libglib2.0-0 libpangocairo-1.0-0\
     && apt-get clean && apt-get install libdmtx0b
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH
