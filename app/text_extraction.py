@@ -3,6 +3,7 @@ import torch
 from doctr.models import ocr_predictor
 from doctr.io import DocumentFile
 from paddleocr import PaddleOCR
+from transformers import AutoProcessor, VisionEncoderDecoderModel
 
 
 class TextExtraction:
@@ -36,7 +37,10 @@ class TextExtraction:
 
     @staticmethod
     def argon_text_model_load():
-        return PaddleOCR(use_angle_cls=True, lang='en', show_log=False, use_gpu=True)
+        if torch.cuda.is_available():
+            return PaddleOCR(use_angle_cls=True, lang='en', show_log=False, use_gpu=True)
+        else:
+            return PaddleOCR(use_angle_cls=True, lang='en', show_log=False, use_gpu=False)
 
     @staticmethod
     def xenon_text_model_load():
@@ -44,6 +48,12 @@ class TextExtraction:
             return ocr_predictor(pretrained=True).cuda()
         else:
             return ocr_predictor(pretrained=True).cpu()
+
+    @staticmethod
+    def krypton_text_model_load():
+        processor = AutoProcessor.from_pretrained("facebook/nougat-small")
+        model = VisionEncoderDecoderModel.from_pretrained("facebook/nougat-small")
+        return processor, model
 
 
 def get_words(output):

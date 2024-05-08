@@ -9,10 +9,14 @@ from model_load import ModelLoad
 from text_extraction import TextExtraction
 from logger_handler import logger
 from typing import List
+from transformers import StoppingCriteriaList
+from nougat_extraction import StoppingCriteriaScores
 
 pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
+processor, text_krypton_model = TextExtraction.krypton_text_model_load()
+
 
 app = FastAPI()
 
@@ -42,8 +46,10 @@ def process_file(request: LlamaRequest):
 
         if text_extraction_model == "ARGON":
             ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
-        else:
+        elif text_extraction_model == "XENON":
             ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
+        else:
+            ocr_result = text_extraction_krypton(request.inputFilePath)
 
         prompt_val = get_file_content(request.promptFilePath)
 
@@ -67,6 +73,23 @@ def process_file(request: LlamaRequest):
     finally:
         gc.collect()
         torch.cuda.empty_cache()
+
+
+def text_extraction_krypton(image_path: str):
+    pixel_values = processor(images=image_path, return_tensors="pt").pixel_values
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    outputs = text_krypton_model.generate(
+        pixel_values.to(device),
+        min_length=1,
+        max_length=3584,
+        bad_words_ids=[[processor.tokenizer.unk_token_id]],
+        return_dict_in_generate=True,
+        output_scores=True,
+        stopping_criteria=StoppingCriteriaList([StoppingCriteriaScores()]),
+    )
+    generated = processor.batch_decode(outputs[0], skip_special_tokens=True)[0]
+    ocr_result = processor.post_process_generation(generated, fix_markdown=False)
+    return ocr_result
 
 
 @app.post("/chat/krypton/files")
@@ -119,3 +142,8 @@ def text_extraction_by_paddle(image_path: str):
 @app.post("/xenon/text")
 def text_extraction_by_xenon(image_path: str):
     return TextExtraction.text_extraction_argon(image_path, text_xenon_model)
+
+
+@app.post("/krypton/text")
+def text_extraction_by_krypton(image_path: str):
+    return text_extraction_krypton(image_path)
