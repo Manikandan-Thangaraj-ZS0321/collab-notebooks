@@ -1,4 +1,5 @@
 import torch
+import gc
 
 from doctr.models import ocr_predictor
 from doctr.io import DocumentFile
@@ -24,6 +25,9 @@ class TextExtraction:
             return paragraph
         except Exception as ex:
             raise ex
+        finally:
+            gc.collect()
+            torch.cuda.empty_cache()
 
     @staticmethod
     def text_extraction_argon(image_path: str, model):
@@ -37,6 +41,9 @@ class TextExtraction:
             return extracted_text
         except Exception as e:
             raise e
+        finally:
+            gc.collect()
+            torch.cuda.empty_cache()
 
     @staticmethod
     def argon_text_model_load():
@@ -60,22 +67,28 @@ class TextExtraction:
 
     @staticmethod
     def text_extraction_krypton(image_path: str):
-        processor, text_krypton_model = TextExtraction.krypton_text_model_load()
-        pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        text_krypton_model.to(device)
-        outputs = text_krypton_model.generate(
-            pixel_values.to(device),
-            min_length=1,
-            max_length=3584,
-            bad_words_ids=[[processor.tokenizer.unk_token_id]],
-            return_dict_in_generate=True,
-            output_scores=True,
-            stopping_criteria=StoppingCriteriaList([StoppingCriteriaScores()]),
-        )
-        generated = processor.batch_decode(outputs[0], skip_special_tokens=True)[0]
-        ocr_result = processor.post_process_generation(generated, fix_markdown=False)
-        return ocr_result
+        try:
+            processor, text_krypton_model = TextExtraction.krypton_text_model_load()
+            pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            text_krypton_model.to(device)
+            outputs = text_krypton_model.generate(
+                pixel_values.to(device),
+                min_length=1,
+                max_length=3584,
+                bad_words_ids=[[processor.tokenizer.unk_token_id]],
+                return_dict_in_generate=True,
+                output_scores=True,
+                stopping_criteria=StoppingCriteriaList([StoppingCriteriaScores()]),
+            )
+            generated = processor.batch_decode(outputs[0], skip_special_tokens=True)[0]
+            ocr_result = processor.post_process_generation(generated, fix_markdown=False)
+            return ocr_result
+        except Exception as ex:
+            raise ex
+        finally:
+            gc.collect()
+            torch.cuda.empty_cache()
 
 
 def get_words(output):
