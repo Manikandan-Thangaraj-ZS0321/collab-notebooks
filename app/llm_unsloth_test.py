@@ -16,6 +16,7 @@ from text_extraction import TextExtraction
 model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
+processor, text_krypton_model = TextExtraction.krypton_text_model_load()
 
 
 app = FastAPI()
@@ -139,7 +140,7 @@ def text_extraction_by_xenon(image_path: str):
 
 @app.post("/krypton/text")
 def text_extraction_by_krypton(image_path: str):
-    return TextExtraction.text_extraction_krypton(image_path)
+    return TextExtraction.text_extraction_krypton(image_path, processor, text_krypton_model)
 
 
 @app.post("/chat/krypton/files")

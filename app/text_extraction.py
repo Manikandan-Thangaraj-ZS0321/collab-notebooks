@@ -10,6 +10,11 @@ from nougat_extraction import StoppingCriteriaScores
 from PIL import Image
 
 
+# nougat_model = "/home/hera/workspace/llama3/models--facebook--nougat-small/snapshots/dced72ae7bcdfcb82a9ef55543a90a7a5e4d32e6"
+# nougat_model = "/data/models/models--facebook--nougat-small/snapshots/dced72ae7bcdfcb82a9ef55543a90a7a5e4d32e6"
+nougat_model = "facebook/nougat-small"
+
+
 class TextExtraction:
     def __init__(self):
         pass
@@ -61,14 +66,13 @@ class TextExtraction:
 
     @staticmethod
     def krypton_text_model_load():
-        processor = AutoProcessor.from_pretrained("facebook/nougat-small")
-        model = VisionEncoderDecoderModel.from_pretrained("facebook/nougat-small")
+        processor = AutoProcessor.from_pretrained(nougat_model)
+        model = VisionEncoderDecoderModel.from_pretrained(nougat_model)
         return processor, model
 
     @staticmethod
-    def text_extraction_krypton(image_path: str):
+    def text_extraction_krypton(image_path: str, processor, text_krypton_model):
         try:
-            processor, text_krypton_model = TextExtraction.krypton_text_model_load()
             pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
             device = "cuda" if torch.cuda.is_available() else "cpu"
             text_krypton_model.to(device)
