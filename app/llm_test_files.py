@@ -136,7 +136,7 @@ def text_extraction_by_paddle(image_path: str):
 
 @app.post("/xenon/text")
 def text_extraction_by_xenon(image_path: str):
-    return TextExtraction.text_extraction_argon(image_path, text_xenon_model)
+    return TextExtraction.text_extraction_xenon(image_path, text_xenon_model)
 
 
 @app.post("/krypton/text")
