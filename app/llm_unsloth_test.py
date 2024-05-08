@@ -80,7 +80,7 @@ def process_file(request: LlamaRequest):
         # outputs = model.generate(input_ids=prompt, streamer=text_streamer, max_new_tokens=2048, use_cache=True,
         #                                  pad_token_id=tokenizer.pad_token_id)
 
-        outputs = model.generate(input_ids=prompt, max_new_tokens=2048, use_cache=True,
+        outputs = model.generate(input_ids=prompt, max_new_tokens=8192, use_cache=True,
                                  pad_token_id=tokenizer.pad_token_id)
 
         logger.info("completed response generation for file {}".format(filename))

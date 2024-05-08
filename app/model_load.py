@@ -10,14 +10,15 @@ from logger_handler import logger
 HF_TOKEN = os.environ['HF_TOKEN']
 # model_id = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
 # unsloth_model = "/home/hera/workspace/llama3/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
+llama_cpp_model = "/home/hera/workspace/llama3/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
 
 # model_id= "/data/models/models--meta-llama--Meta-Llama-3-8B-Instruct/snapshots/e5e23bbe8e749ef0efcf16cad411a7d23bd23298"
 # unsloth_model = "/data/models/models--unsloth--llama-3-8b-Instruct-bnb-4bit/snapshots/efa44c86af4fcbbc3d75e6cb1c8bfaf7f5c7cfc1"
+#llama_cpp_model = "/data/models/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
 
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
 unsloth_model = "unsloth/llama-3-8b-Instruct"
 quant_cpp_model = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
-llama_cpp_model = "/data/models/Meta-Llama-3-8B-Instruct.Q8_0.gguf"
 
 
 class ModelLoad:
