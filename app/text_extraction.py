@@ -4,6 +4,9 @@ from doctr.models import ocr_predictor
 from doctr.io import DocumentFile
 from paddleocr import PaddleOCR
 from transformers import AutoProcessor, VisionEncoderDecoderModel
+from transformers import StoppingCriteriaList
+from nougat_extraction import StoppingCriteriaScores
+from PIL import Image
 
 
 class TextExtraction:
@@ -55,6 +58,25 @@ class TextExtraction:
         model = VisionEncoderDecoderModel.from_pretrained("facebook/nougat-small")
         return processor, model
 
+    @staticmethod
+    def text_extraction_krypton(image_path: str):
+        processor, text_krypton_model = TextExtraction.krypton_text_model_load()
+        pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        text_krypton_model.to(device)
+        outputs = text_krypton_model.generate(
+            pixel_values.to(device),
+            min_length=1,
+            max_length=3584,
+            bad_words_ids=[[processor.tokenizer.unk_token_id]],
+            return_dict_in_generate=True,
+            output_scores=True,
+            stopping_criteria=StoppingCriteriaList([StoppingCriteriaScores()]),
+        )
+        generated = processor.batch_decode(outputs[0], skip_special_tokens=True)[0]
+        ocr_result = processor.post_process_generation(generated, fix_markdown=False)
+        return ocr_result
+
 
 def get_words(output):
     try:
@@ -67,4 +89,3 @@ def get_words(output):
         return text_coordinates
     except Exception as ex:
         raise ex
-

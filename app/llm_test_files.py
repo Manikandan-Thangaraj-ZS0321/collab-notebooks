@@ -43,6 +43,8 @@ def process_file(request: LlamaRequest):
 
         if text_extraction_model == "ARGON":
             ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
+        elif text_extraction_model == "KRYPTON":
+            ocr_result = TextExtraction.text_extraction_krypton(request.inputFilePath)
         else:
             ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
 
@@ -136,3 +138,7 @@ def text_extraction_by_paddle(image_path: str):
 def text_extraction_by_xenon(image_path: str):
     return TextExtraction.text_extraction_argon(image_path, text_xenon_model)
 
+
+@app.post("/krypton/text")
+def text_extraction_by_krypton(image_path: str):
+    return TextExtraction.text_extraction_krypton(image_path)
