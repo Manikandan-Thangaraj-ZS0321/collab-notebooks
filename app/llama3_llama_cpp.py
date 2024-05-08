@@ -79,6 +79,7 @@ def process_file(request: LlamaRequest):
 def text_extraction_krypton(image_path: str):
     pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    text_krypton_model.to(device)
     outputs = text_krypton_model.generate(
         pixel_values.to(device),
         min_length=1,
