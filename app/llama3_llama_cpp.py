@@ -11,6 +11,7 @@ from logger_handler import logger
 from typing import List
 from transformers import StoppingCriteriaList
 from nougat_extraction import StoppingCriteriaScores
+from PIL import Image
 
 pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 text_argon_model = TextExtraction.argon_text_model_load()
@@ -76,7 +77,7 @@ def process_file(request: LlamaRequest):
 
 
 def text_extraction_krypton(image_path: str):
-    pixel_values = processor(images=image_path, return_tensors="pt").pixel_values
+    pixel_values = processor(images=Image.open(image_path), return_tensors="pt").pixel_values
     device = "cuda" if torch.cuda.is_available() else "cpu"
     outputs = text_krypton_model.generate(
         pixel_values.to(device),
