@@ -45,7 +45,7 @@ def process_file(request: LlamaRequest):
         if text_extraction_model == "ARGON":
             ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
         elif text_extraction_model == "KRYPTON":
-            ocr_result = TextExtraction.text_extraction_krypton(request.inputFilePath)
+            ocr_result = TextExtraction.text_extraction_krypton(request.inputFilePath, processor, text_krypton_model)
         else:
             ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
 
