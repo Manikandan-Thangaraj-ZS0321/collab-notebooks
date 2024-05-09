@@ -25,6 +25,7 @@ class TextExtraction:
             doc = DocumentFile.from_images(file_path)
             output = model(doc)
             json_output = output.export()
+            # words_with_coordinates = get_word_coordinates(json_output)
             words = get_words(json_output)
             paragraph = ' '.join(words)
             return paragraph
@@ -103,6 +104,19 @@ def get_words(output):
             for obj2 in obj1["lines"]:
                 for obj3 in obj2["words"]:
                     text_coordinates.append(obj3["value"])
+        return text_coordinates
+    except Exception as ex:
+        raise ex
+
+
+def get_word_coordinates(output):
+    try:
+        # page_dim = output['pages'][0]["dimensions"]
+        text_coordinates = []
+        for obj1 in output['pages'][0]["blocks"]:
+            for obj2 in obj1["lines"]:
+                for obj3 in obj2["words"]:
+                    text_coordinates.append({"value":obj3["value"], "geometry":obj3["geometry"]})
         return text_coordinates
     except Exception as ex:
         raise ex
