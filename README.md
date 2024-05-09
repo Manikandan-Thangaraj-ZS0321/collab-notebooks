@@ -1,4 +1,4 @@
-This repository includes files exposing differnt Llama3 model versions as API endpoints.
+This repository includes files exposing different Llama3 model versions as API endpoints.
 1. Llama3 -8B-Instruct model unquantized model
 2. Unsloth version
 3. Llama cpp vesrion
