@@ -120,3 +120,38 @@ def get_word_coordinates(output):
         return text_coordinates
     except Exception as ex:
         raise ex
+
+
+def text_extraction_xenon(file_path, model):
+    try:
+        doc = DocumentFile.from_images(file_path)
+        output = model(doc)
+        json_output = output.export()
+        # words_with_coordinates = get_word_coordinates(json_output)
+        # print(words_with_coordinates)
+        # words = get_words(json_output)
+        # paragraph = ' '.join(words)
+        page_words = [[word for block in page['blocks'] for line in block['lines'] for word in line['words']] for
+                      page in json_output['pages']]
+        page_dims = [page['dimensions'] for page in json_output['pages']]
+        output_data = []
+
+        for id, item in enumerate(page_words[0]):
+            bbox = {}
+            bbox['x_min'] = int(item['geometry'][0][0] * page_dims[0][1])
+            bbox['y_min'] = int(item['geometry'][0][1] * page_dims[0][0])
+            bbox['x_max'] = int(item['geometry'][1][0] * page_dims[0][1])
+            bbox['y_max'] = int(item['geometry'][1][1] * page_dims[0][0])
+
+            output_item = {'value': item['value'], 'bbox': bbox}
+            output_data.append(output_item)
+            if id == 100:
+                break
+
+        print(output_data)
+        return output_data
+    except Exception as ex:
+        raise ex
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()

@@ -75,8 +75,8 @@ class ModelLoad:
     def krypton_chat_llamacpp_model_load():
 
         try:
-            llm = Llama(model_path=llama_cpp_model, verbose=True, n_gpu_layers=-1, n_ctx=8192, echo=False, temperature=0.6)
-            #llm = Llama.from_pretrained(repo_id=quant_cpp_model, filename="Meta-Llama-3-8B-Instruct.Q8_0.gguf", verbose=True, n_gpu_layers=-1, n_ctx=8192)
+            # llm = Llama(model_path=llama_cpp_model, verbose=True, n_gpu_layers=-1, n_ctx=8192, echo=False, temperature=0.6)
+            llm = Llama.from_pretrained(repo_id=quant_cpp_model, filename="Meta-Llama-3-8B-Instruct.Q8_0.gguf", verbose=True, n_gpu_layers=-1, n_ctx=8192)
             logger.info("The krypton chat model has been successfully loaded")
             return llm
         except Exception as ex:
