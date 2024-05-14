@@ -15,7 +15,6 @@ text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
 processor, text_krypton_model = TextExtraction.krypton_text_model_load()
 
-
 app = FastAPI()
 
 
@@ -35,6 +34,32 @@ def get_file_content(file_path):
     with open(file_path, 'r') as file:
         text = file.read()
         return text
+
+
+@app.post("/chat/llama")
+def process_file(prompt: str):
+    try:
+
+        messages = [
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": ""},
+        ]
+
+        # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
+        response = pipeline.create_chat_completion(messages=messages)
+
+        prompt_result = response["choices"][0]["message"]["content"].strip()
+        # prompt_result = response
+
+        logger.info("completed response generation from llm")
+
+        return prompt_result
+
+    except Exception as ex:
+        raise ex
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 @app.post("/chat/krypton")
@@ -91,7 +116,8 @@ def process_files_in_directory(request: ApiRequest):
             json_file_path = os.path.join(output_folder, f"{filename}.json")
 
         # Process the image
-        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt", textExtractionModel=request.textExtractionModel)
+        llama_request = LlamaRequest(inputFilePath=file, promptFilePath="prompts/response_prompt_v2.txt",
+                                     textExtractionModel=request.textExtractionModel)
         llama_response = process_file(llama_request)
 
         json_response = get_json_data(llama_response)
