@@ -14,7 +14,7 @@ from logger_handler import logger
 from typing import List
 
 model_loader = ModelLoaderClass()
-pipeline = model_loader.load_model()
+pipeline = model_loader.get_loaded_model()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
 processor, text_krypton_model = TextExtraction.krypton_text_model_load()
