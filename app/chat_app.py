@@ -1,7 +1,6 @@
 import streamlit as st
 from model_load import ModelLoad
-model, tokenizer = ModelLoad.krypton_chat_4bit_model_load()
-from transformers import TextStreamer
+# pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 
 
 st.title("LLama3")
@@ -33,9 +32,8 @@ if prompt := st.chat_input("What is up?"):
         #     ],
         #     stream=True,
         # )
-        text_streamer = TextStreamer(tokenizer)
-        outputs = model.generate(input_ids=prompt, streamer=text_streamer, max_new_tokens=2048, use_cache=True, pad_token_id=tokenizer.pad_token_id)
-        prompt_result = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        response_val = ModelLoad.krypton_chat_llamacpp_model_load().create_chat_completion(messages=messages, stream=True)
+        prompt_result = response_val["choices"][0]["message"]["content"].strip()
 
         response = st.markdown(prompt_result)
     st.session_state.messages.append({"role": "assistant", "content": response})
