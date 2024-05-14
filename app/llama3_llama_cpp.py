@@ -3,6 +3,9 @@ import gc
 import os
 import json
 
+from fastapi import FastAPI, File, UploadFile, Query
+from fastapi.responses import StreamingResponse
+
 from pydantic import BaseModel
 from fastapi import FastAPI
 from model_load import ModelLoad
@@ -31,10 +34,51 @@ class LlamaRequest(BaseModel):
     textExtractionModel: str
 
 
+class ChatRequest(BaseModel):
+    inputFilePath: str
+    textExtractionModel: str
+
+
 def get_file_content(file_path):
     with open(file_path, 'r') as file:
         text = file.read()
         return text
+
+
+@app.post("/chat/llama")
+def process_file(request: ChatRequest, prompt: str = Query(...)):
+    try:
+        text_extraction_model = request.textExtractionModel
+
+        if text_extraction_model == "ARGON":
+            ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
+        elif text_extraction_model == "KRYPTON":
+            ocr_result = TextExtraction.text_extraction_krypton(request.inputFilePath, processor, text_krypton_model)
+        else:
+            ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
+
+        prompt_val = prompt
+
+        messages = [
+            {"role": "system", "content": prompt_val},
+            {"role": "user", "content": ocr_result},
+        ]
+
+        # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
+        response = pipeline.create_chat_completion(messages=messages)
+
+        prompt_result = response["choices"][0]["message"]["content"].strip()
+        # prompt_result = response
+
+        logger.info("completed response generation from llm")
+
+        return prompt_result
+
+    except Exception as ex:
+        raise ex
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 @app.post("/chat/krypton")
@@ -128,3 +172,27 @@ def text_extraction_by_xenon(image_path: str):
 @app.post("/krypton/text")
 def text_extraction_by_krypton(image_path: str):
     return TextExtraction.text_extraction_krypton(image_path, processor, text_krypton_model)
+
+
+@app.post("/multipart-upload")
+async def create_papers(file: UploadFile = File(...)):
+    try:
+        outputDir = "/data/output"
+        if not os.path.exists(outputDir):
+            os.makedirs(outputDir, exist_ok=True)
+
+        output_file = os.path.join(outputDir, file.filename)
+
+        if os.path.exists(output_file):
+            logger.info("File {} already exists".format(file.filename))
+            return {"message": "File already downloaded", "filename": file.filename}
+
+        with open(output_file, "wb") as f:
+            f.write(file.file.read())
+
+        logger.info("File {} downloaded successfully".format(file.filename))
+        return output_file
+
+    except Exception as e:
+        logger.error("Error in downloading multipart file {} with exception {}".format(file.filename, e))
+        return {"error": str(e)}
