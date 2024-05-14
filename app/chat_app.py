@@ -4,16 +4,7 @@ from llama_cpp_model_load import ModelLoader
 import torch
 import gc
 from logger_handler import logger
-
-
-class ModelUserClass:
-    def __init__(self, model_loader):  # Inject the model loader
-        self.model_loader = model_loader
-
-    def use_model(self):
-        # Get the model from the provided loader
-        return self.model_loader.get_model()
-
+from llama3_llama_cpp import ModelUserClass
 
 model_loader = ModelLoader()
 pipeline_model = ModelUserClass(model_loader)
