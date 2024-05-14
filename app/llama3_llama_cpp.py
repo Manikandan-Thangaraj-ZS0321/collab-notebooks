@@ -72,7 +72,7 @@ def chat_with_files(request: ChatRequest, prompt: str = Query(...)):
 
         logger.info("completed response generation from llm")
 
-        return response
+        return prompt_result
 
     except Exception as ex:
         raise ex
