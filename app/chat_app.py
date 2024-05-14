@@ -1,6 +1,12 @@
 import streamlit as st
 import requests
-import llama3_llama_cpp
+from llama_cpp_model_load import ModelLoaderClass
+import torch
+import gc
+from logger_handler import logger
+
+pipeline = ModelLoaderClass.get_loaded_model()
+
 
 st.title("Intics Chatbot")
 
@@ -11,6 +17,32 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+
+
+def chat_prompt(prompt: str):
+    try:
+        prompt_val = prompt
+
+        messages = [
+            {"role": "system", "content": prompt_val},
+            {"role": "user", "content": ""},
+        ]
+
+        # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
+        response = pipeline.create_chat_completion(messages=messages)
+
+        prompt_result = response["choices"][0]["message"]["content"].strip()
+        # prompt_result = response
+
+        logger.info("completed response generation from llm")
+
+        return prompt_result
+
+    except Exception as ex:
+        raise ex
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 if instruction := st.chat_input("Ask me..."):
@@ -27,5 +59,7 @@ if instruction := st.chat_input("Ask me..."):
     #     prompt_result = response.
     #     st.write(prompt_result)
 
-    prompt_result = llama3_llama_cpp.chat_prompt(instruction)
+    prompt_result = chat_prompt(instruction)
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
+
+
