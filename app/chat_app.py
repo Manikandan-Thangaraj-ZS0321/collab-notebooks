@@ -1,10 +1,9 @@
 import streamlit as st
 from model_load import ModelLoad
+# pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 
 
-pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
-
-st.title("ChatGPT-like clone")
+st.title("LLama3")
 
 
 if "messages" not in st.session_state:
@@ -33,7 +32,7 @@ if prompt := st.chat_input("What is up?"):
         #     ],
         #     stream=True,
         # )
-        response_val = pipeline.create_chat_completion(messages=messages)
+        response_val = ModelLoad.krypton_chat_llamacpp_model_load().create_chat_completion(messages=messages)
         prompt_result = response_val["choices"][0]["message"]["content"].strip()
 
         response = st.write_stream(prompt_result)
