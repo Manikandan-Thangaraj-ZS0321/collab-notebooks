@@ -1,10 +1,11 @@
 import streamlit as st
+from model_load import ModelLoad
+
+
+pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 
 st.title("ChatGPT-like clone")
 
-
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -18,6 +19,11 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("user"):
         st.markdown(prompt)
 
+    messages = [
+        {"role": "system", "content": ""},
+        {"role": "user", "content": prompt},
+    ]
+
     with st.chat_message("assistant"):
         # stream = client.chat.completions.create(
         #     model=st.session_state["openai_model"],
@@ -27,5 +33,7 @@ if prompt := st.chat_input("What is up?"):
         #     ],
         #     stream=True,
         # )
-        response = st.write_stream("stream")
+        response_val = pipeline.create_chat_completion(messages=messages)
+
+        response = st.write_stream(response_val)
     st.session_state.messages.append({"role": "assistant", "content": response})
