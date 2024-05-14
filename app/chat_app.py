@@ -1,5 +1,4 @@
 import streamlit as st
-from model_load import ModelLoad
 from llama3_llama_cpp import chat_prompt
 
 st.title("LLama3")
@@ -37,7 +36,6 @@ if instruction := st.chat_input("Your message"):
         #     ],
         #     stream=True,
         # )
-        # response_val = ModelLoad.krypton_chat_llamacpp_model_load().create_chat_completion(messages=messages, stream=True)
         prompt_result = chat_prompt(instruction)
 
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
