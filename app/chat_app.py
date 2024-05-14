@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import llama3_llama_cpp
 
 st.title("Intics Chatbot")
 
@@ -19,10 +20,12 @@ if instruction := st.chat_input("Ask me..."):
     with st.chat_message("user"):
         st.markdown(instruction)
 
-    url = 'http://192.168.10.238:10002/chat/llama'
-    headers = {'accept': 'application/json'}
-    with st.chat_message("assistant"):
-        response = requests.post(url, headers=headers, params={'prompt': instruction})
-        prompt_result = response.text
-        st.write(prompt_result)
+    # url = 'http://192.168.10.238:10002/chat/llama'
+    # headers = {'accept': 'application/json'}
+    # with st.chat_message("assistant"):
+    #     response = requests.post(url, headers=headers, params={'prompt': instruction})
+    #     prompt_result = response.
+    #     st.write(prompt_result)
+
+    prompt_result = llama3_llama_cpp.chat_prompt(instruction)
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
