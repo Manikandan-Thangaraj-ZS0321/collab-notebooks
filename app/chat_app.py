@@ -7,16 +7,16 @@ from logger_handler import logger
 
 
 class ModelUserClass:
-    def __init__(self):  # Inject the model loader
-        self.llama_cpp_model_load = ModelLoader
+    def __init__(self, model_loader):  # Inject the model loader
+        self.model_loader = model_loader
 
     def use_model(self):
         # Get the model from the provided loader
-        return self.llama_cpp_model_load.get_model()
+        return self.model_loader.get_model()
 
 
-model_pipeline = ModelUserClass()
-pipeline = model_pipeline.use_model()
+model_loader = ModelLoader()
+pipeline_model = ModelUserClass(model_loader)
 
 
 st.title("Intics Chatbot")
@@ -40,7 +40,7 @@ def chat_prompt(prompt: str):
         ]
 
         # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
-        response = pipeline.create_chat_completion(messages=messages)
+        response = pipeline_model.use_model().create_chat_completion(messages=messages)
 
         prompt_result = response["choices"][0]["message"]["content"].strip()
         # prompt_result = response
