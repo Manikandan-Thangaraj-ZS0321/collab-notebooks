@@ -14,7 +14,20 @@ from logger_handler import logger
 from typing import List
 
 model_loader = ModelLoader()
-pipeline = model_loader.get_model()
+
+
+class ModelUserClass:
+    def __init__(self, llama_cpp_model_load):  # Inject the model loader
+        self.llama_cpp_model_load = llama_cpp_model_load
+
+    def use_model(self):
+        # Get the model from the provided loader
+        return self.llama_cpp_model_load.get_model()
+
+
+model_pipeline = ModelUserClass(model_loader)
+pipeline = model_pipeline.use_model()
+
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
 processor, text_krypton_model = TextExtraction.krypton_text_model_load()

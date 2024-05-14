@@ -5,8 +5,20 @@ import torch
 import gc
 from logger_handler import logger
 
-model_loader = ModelLoader
-pipeline = model_loader.get_model
+model_loader = ModelLoader()  # Create the model loader
+
+
+class ModelUserClass:
+    def __init__(self, llama_cpp_model_load):  # Inject the model loader
+        self.llama_cpp_model_load = llama_cpp_model_load
+
+    def use_model(self):
+        # Get the model from the provided loader
+        return self.llama_cpp_model_load.get_model()
+
+
+model_pipeline = ModelUserClass(model_loader)
+pipeline = model_pipeline.use_model()
 
 
 st.title("Intics Chatbot")
@@ -62,5 +74,3 @@ if instruction := st.chat_input("Ask me..."):
 
     prompt_result = chat_prompt(instruction)
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
-
-
