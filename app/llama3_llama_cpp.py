@@ -65,7 +65,7 @@ def chat_with_files(request: ChatRequest, prompt: str = Query(...)):
         ]
 
         # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
-        response = .create_chat_completion(messages=messages, stream=True)
+        response = pipeline.create_chat_completion(messages=messages, stream=True)
 
         prompt_result = response["choices"][0]["message"]["content"].strip()
         # prompt_result = response
