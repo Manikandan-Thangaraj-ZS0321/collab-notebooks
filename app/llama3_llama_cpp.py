@@ -13,19 +13,17 @@ from text_extraction import TextExtraction
 from logger_handler import logger
 from typing import List
 
-model_loader = ModelLoader()
-
 
 class ModelUserClass:
-    def __init__(self, llama_cpp_model_load):  # Inject the model loader
-        self.llama_cpp_model_load = llama_cpp_model_load
+    def __init__(self):  # Inject the model loader
+        self.llama_cpp_model_load = ModelLoader
 
     def use_model(self):
         # Get the model from the provided loader
         return self.llama_cpp_model_load.get_model()
 
 
-model_pipeline = ModelUserClass(model_loader)
+model_pipeline = ModelUserClass()
 pipeline = model_pipeline.use_model()
 
 text_argon_model = TextExtraction.argon_text_model_load()
