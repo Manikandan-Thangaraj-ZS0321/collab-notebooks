@@ -22,6 +22,7 @@ if instruction := st.chat_input("Ask me..."):
     url = 'http://192.168.10.238:10002/chat/llama'
     headers = {'accept': 'application/json'}
     with st.chat_message("assistant"):
-        prompt_result = requests.post(url, headers=headers, params={'prompt': instruction})
+        response = requests.post(url, headers=headers, params={'prompt': instruction})
+        prompt_result = response.text
         st.write(prompt_result)
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
