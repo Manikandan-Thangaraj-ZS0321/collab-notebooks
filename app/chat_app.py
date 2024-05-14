@@ -37,5 +37,6 @@ if instruction := st.chat_input("Your message"):
         #     stream=True,
         # )
         prompt_result = chat_prompt(instruction)
+        print(prompt_result)
 
     st.session_state.messages.append({"role": "assistant", "content": prompt_result})
