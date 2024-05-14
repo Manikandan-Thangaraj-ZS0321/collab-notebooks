@@ -1,7 +1,7 @@
 import streamlit as st
 from llama3_llama_cpp import chat_prompt
 
-st.title("LLama3")
+st.title("Intics Chatbot")
 
 
 if "messages" not in st.session_state:
@@ -17,7 +17,7 @@ for message in st.session_state.messages:
 #         st.markdown(prompt)
 
 
-if instruction := st.chat_input("Your message"):
+if instruction := st.chat_input("Ask me..."):
     messages = [
         {"role": "system", "content": ""},
         {"role": "user", "content": instruction},
@@ -37,6 +37,7 @@ if instruction := st.chat_input("Your message"):
         #     stream=True,
         # )
         prompt_result = chat_prompt(instruction)
-        print(prompt_result)
+        response = st.write_stream(prompt_result)
+        print(response)
 
-    st.session_state.messages.append({"role": "assistant", "content": prompt_result})
+    st.session_state.messages.append({"role": "assistant", "content": response})
