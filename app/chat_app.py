@@ -35,5 +35,5 @@ if prompt := st.chat_input("What is up?"):
         response_val = ModelLoad.krypton_chat_llamacpp_model_load().create_chat_completion(messages=messages, stream=True)
         prompt_result = response_val["choices"][0]["message"]["content"].strip()
 
-        response = st.write_stream(response_val)
+        response = st.markdown(prompt_result)
     st.session_state.messages.append({"role": "assistant", "content": response})
