@@ -25,7 +25,7 @@ if instruction := st.chat_input("Ask me..."):
     with st.spinner('Processing...'):
         with st.chat_message("assistant"):
             response = requests.post(url, headers=headers, params={'prompt': instruction})
-            prompt_result = response.text
-            st.write(response.text)
+            prompt_result = response.content
+            st.write(response.content)
 
         st.session_state.messages.append({"role": "assistant", "content": prompt_result})
