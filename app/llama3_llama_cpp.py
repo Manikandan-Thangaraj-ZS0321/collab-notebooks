@@ -8,12 +8,12 @@ from fastapi.responses import StreamingResponse
 
 from pydantic import BaseModel
 from fastapi import FastAPI
-from model_load import ModelLoad
+import llama_cpp_model_load
 from text_extraction import TextExtraction
 from logger_handler import logger
 from typing import List
 
-pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
+pipeline = llama_cpp_model_load.load_model()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
 processor, text_krypton_model = TextExtraction.krypton_text_model_load()
@@ -65,7 +65,7 @@ def chat_with_files(request: ChatRequest, prompt: str = Query(...)):
         ]
 
         # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
-        response = pipeline.create_chat_completion(messages=messages, stream=True)
+        response = .create_chat_completion(messages=messages, stream=True)
 
         prompt_result = response["choices"][0]["message"]["content"].strip()
         # prompt_result = response
