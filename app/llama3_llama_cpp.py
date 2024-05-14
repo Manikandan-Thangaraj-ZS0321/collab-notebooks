@@ -177,7 +177,7 @@ def text_extraction_by_krypton(image_path: str):
 @app.post("/multipart-upload")
 async def create_papers(file: UploadFile = File(...)):
     try:
-        outputDir = "/data/output"
+        outputDir = "/home/hera/data/output"
         if not os.path.exists(outputDir):
             os.makedirs(outputDir, exist_ok=True)
 
