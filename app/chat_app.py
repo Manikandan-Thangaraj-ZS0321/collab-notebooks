@@ -1,11 +1,12 @@
 import streamlit as st
 import requests
-from llama_cpp_model_load import ModelLoaderClass
+from llama_cpp_model_load import ModelLoader
 import torch
 import gc
 from logger_handler import logger
 
-pipeline = ModelLoaderClass().get_loaded_model()
+model_loader = ModelLoader()
+pipeline = model_loader.get_model()
 
 
 st.title("Intics Chatbot")
