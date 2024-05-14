@@ -40,8 +40,6 @@ if instruction := st.chat_input("Your message"):
         # )
         response_val = ModelLoad.krypton_chat_llamacpp_model_load().create_chat_completion(messages=messages, stream=True)
         # prompt_result = response_val["choices"][0]["message"]["content"].strip()
-        with st.chat_message("assistant"):
-            st.markdown(response_val)
 
-        response = st.markdown(response_val)
+        response = st.write_stream(response_val)
     st.session_state.messages.append({"role": "assistant", "content": response})
