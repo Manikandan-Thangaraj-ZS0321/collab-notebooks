@@ -5,8 +5,8 @@ import torch
 import gc
 from logger_handler import logger
 
-model_loader = ModelLoader()
-pipeline = model_loader.get_model()
+model_loader = ModelLoader
+pipeline = model_loader.get_model
 
 
 st.title("Intics Chatbot")
