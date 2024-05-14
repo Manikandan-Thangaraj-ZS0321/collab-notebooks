@@ -45,8 +45,8 @@ def get_file_content(file_path):
         return text
 
 
-@app.post("/chat/llama")
-def process_file(request: ChatRequest, prompt: str = Query(...)):
+@app.post("/chat/llama/files")
+def chat_with_files(request: ChatRequest, prompt: str = Query(...)):
     try:
         text_extraction_model = request.textExtractionModel
 
@@ -81,7 +81,33 @@ def process_file(request: ChatRequest, prompt: str = Query(...)):
         torch.cuda.empty_cache()
 
 
-@app.post("/chat/krypton")
+@app.post("/chat/llama")
+def chat_prompt(prompt: str = Query(...)):
+    try:
+        prompt_val = prompt
+
+        messages = [
+            {"role": "system", "content": prompt_val},
+            {"role": "user", "content": ""},
+        ]
+
+        # response = pipeline.create_chat_completion(messages=messages, response_format={"type": "json_object"})
+        response = pipeline.create_chat_completion(messages=messages)
+
+        prompt_result = response["choices"][0]["message"]["content"].strip()
+        # prompt_result = response
+
+        logger.info("completed response generation from llm")
+
+        return prompt_result
+
+    except Exception as ex:
+        raise ex
+    finally:
+        gc.collect()
+        torch.cuda.empty_cache()
+
+
 def process_file(request: LlamaRequest):
     try:
         text_extraction_model = request.textExtractionModel
