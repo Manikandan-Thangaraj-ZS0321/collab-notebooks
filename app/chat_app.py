@@ -34,6 +34,7 @@ if prompt := st.chat_input("What is up?"):
         #     stream=True,
         # )
         response_val = pipeline.create_chat_completion(messages=messages)
+        prompt_result = response_val["choices"][0]["message"]["content"].strip()
 
-        response = st.write_stream(response_val)
+        response = st.write_stream(prompt_result)
     st.session_state.messages.append({"role": "assistant", "content": response})
