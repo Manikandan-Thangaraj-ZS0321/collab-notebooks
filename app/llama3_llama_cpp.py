@@ -13,6 +13,8 @@ from typing import List
 pipeline = ModelLoad.krypton_chat_llamacpp_model_load()
 text_argon_model = TextExtraction.argon_text_model_load()
 text_xenon_model = TextExtraction.xenon_text_model_load()
+processor, text_krypton_model = TextExtraction.krypton_text_model_load()
+
 
 app = FastAPI()
 
@@ -42,6 +44,8 @@ def process_file(request: LlamaRequest):
 
         if text_extraction_model == "ARGON":
             ocr_result = TextExtraction.text_extraction_argon(request.inputFilePath, text_argon_model)
+        elif text_extraction_model == "KRYPTON":
+            ocr_result = TextExtraction.text_extraction_krypton(request.inputFilePath, processor, text_krypton_model)
         else:
             ocr_result = TextExtraction.text_extraction_xenon(request.inputFilePath, text_xenon_model)
 
@@ -118,4 +122,9 @@ def text_extraction_by_paddle(image_path: str):
 
 @app.post("/xenon/text")
 def text_extraction_by_xenon(image_path: str):
-    return TextExtraction.text_extraction_argon(image_path, text_xenon_model)
+    return TextExtraction.text_extraction_xenon(image_path, text_xenon_model)
+
+
+@app.post("/krypton/text")
+def text_extraction_by_krypton(image_path: str):
+    return TextExtraction.text_extraction_krypton(image_path, processor, text_krypton_model)
