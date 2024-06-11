@@ -1,0 +1,134 @@
+Extract the key value pairs and map those extracted values to the json structure mentioned below. Use the information below for mapping the results
+
+Sections:
+1. Medication Information
+2. Provider Information
+3. Patient Information
+4. Prescriber details
+5. Service Information
+
+Section alias present/ not present in document:
+
+- Medication Information - Medication Information
+- Patient Information - Patient Information
+- Prescriber details - Prescriber details
+- Provider Information - Provider,Provider Information
+- Service Information	- Service Information
+
+sor Items to Extract:
+- Medication Information: amount,cpt,dos,modifier,pointers,total,units
+- Patient Information: expected_payment,insured_id,patient_account_number,patient_claim_id,patient_dob,patient_health_plan_id,patient_healthy_blue_id,patient_name,patient_original_claim_amount_billed,patient_original_claim_amount_paid,patient_responsibility_amount,payment_amount,service_from_date,service_to_date,total_charges,underpayment_due_amount
+- Prescriber details: attended_date,contact_name,fax_number,phone_number,title
+- Provider Information: appeal_request_date,contact_person_name,national_provider_id,phone_number,provider_address,provider_city,provider_fax_number,provider_id,provider_name,provider_npi_number,provider_phone_number,provider_type,reason_for_appeal,tax_id_number
+- Service Information: date_of_service,place_of_service
+
+sorItem actuals(Synonyms) present or not present in document:
+
+amount - Amount
+appeal_request_date - Appeal request date
+attended_date -	Date
+contact_name -	Contact Name
+contact_person_name	- Contact person
+cpt	- CPT
+date_of_service	- Date of service
+dos	- DOS
+expected_payment - Expected payment
+fax_number	- Fax Number
+insured_id	- Insured's ID
+modifier - Modifier
+national_provider_id - National Provider ID(NPI)
+patient_account_number - Patient Account Number
+patient_claim_id - Original ID claim Number
+patient_dob	- Date of Birth
+patient_health_plan_id - Healthy Blue ID,Helath Plan ID Number
+patient_name - Name,Patient Name
+patient_original_claim_amount_billed - Original Claim amount billed
+patient_original_claim_amount_paid	- Original claim amount paid
+patient_responsibility_amount	- Patient Responsibility
+payment_amount	- Payment Amount
+phone_number - Direct,Phone Number
+place_of_service - Place of service
+pointers - Pointers
+provider_address - Address,Provider Address
+provider_city - City
+provider_fax_number - Fax
+provider_id	- Provider ID
+provider_name - Name,Provider Name
+provider_npi_number - Provider NPI
+provider_phone_number - Telephone
+provider_type - Provider Type
+reason_for_appeal - Reason for appeal
+service_from_date - Service From date
+service_to_date - Service To date
+tax_id_number - Tax ID
+title - Title
+total - Total
+total_charges - Total charges
+underpayment_due_amount - Underpayment Due
+units - Units
+
+JSON Contract:
+
+{
+    "Patient Information": {
+        "expected_payment" : null,
+        "insured_id" : null,
+        "patient_account_number" : null,
+        "patient_claim_id" : null,
+        "patient_dob" : null,
+        "patient_health_plan_id" : null,
+        "patient_healthy_blue_id" : null,
+        "patient_name" : null,
+        "patient_original_claim_amount_billed" : null,
+        "patient_original_claim_amount_paid" : null,
+        "patient_responsibility_amount" : null,
+        "payment_amount" : null,
+        "service_from_date" : null,
+        "service_to_date" : null,
+        "total_charges" : null,
+        "underpayment_due_amount" : null
+    },
+    "Prescriber details":{
+        "attended_date" : null,
+        "contact_name" : null,
+        "fax_number" : null,
+        "phone_number" : null,
+        "title" : null
+    },
+    "Provider Information":{
+        "appeal_request_date" : null,
+        "contact_person_name" : null,
+        "national_provider_id" : null,
+        "phone_number" : null,
+        "provider_address" : null,
+        "provider_city" : null,
+        "provider_fax_number" : null,
+        "provider_id" : null,
+        "provider_name" : null,
+        "provider_npi_number" : null,
+        "provider_phone_number" : null,
+        "provider_type" : null,
+        "reason_for_appeal" : null,
+        "tax_id_number" : null
+    },
+    "Medication Information":{
+        "amount" : null,
+        "cpt" : null,
+        "dos" : null,
+        "modifier" : null,
+        "pointers" : null,
+        "total" : null,
+        "units" : null
+    }
+    "Service Information":{
+        "date_of_service" : null,
+        "place_of_service" : null
+    }
+}
+
+Note:
+Don't alter the structure of the Json mentioned.
+Map the extracted results to the above mentioned JSON Object.
+Maintain the structure don't skip sorItems and sections name.
+If fields not have values or are not present for the sorItem and section, then return sorItem and sections with empty values, don't leave it.
+Provide only the json response from Extraction Output in Response, don't add any additional information.
